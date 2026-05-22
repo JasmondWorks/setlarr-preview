@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Sign in · Setlarr</title>
+<meta name="viewport" content="width=1280" />
+<link rel="stylesheet" href="../colors_and_type.css" />
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    background: var(--neutral-50);
+    color: var(--neutral-900);
+    min-width: 1280px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  button, input { font-family: inherit; }
+  button { cursor: pointer; }
+  [data-lucide] { display: inline-block; vertical-align: middle; }
+
+  /* ---------- topbar ---------- */
+  .topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 64px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    border-bottom: 1px solid var(--neutral-200);
+    z-index: 50;
+  }
+  .topbar-inner {
+    height: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 80px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-mark {
+    width: 28px; height: 28px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 3px; flex-shrink: 0;
+  }
+  .logo-mark > span { background: var(--brand-600); border-radius: 3px; }
+  .logo-mark > span:nth-child(2) { background: var(--brand-500); }
+  .logo-mark > span:nth-child(3) { background: var(--brand-500); }
+  .logo-mark > span:nth-child(4) { background: var(--brand-700); }
+  .logo-word {
+    font-size: 18px; font-weight: 600;
+    color: var(--neutral-900); letter-spacing: -0.2px;
+  }
+  .topbar-right { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
+  .topbar-right .muted { color: var(--neutral-500); font-weight: 400; }
+  .topbar-right a {
+    color: var(--brand-600);
+    font-weight: 400;
+    text-decoration: none;
+    line-height: 1;
+  }
+  .topbar-right a:hover { color: var(--brand-700); }
+
+  /* ============================================================
+     PAGE BACKGROUND PATTERN + BLOBS
+     ============================================================ */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 64px 0 0 0;
+    background-image:
+      radial-gradient(circle, hsl(248, 30%, 80%) 1px, transparent 1.4px);
+    background-size: 28px 28px;
+    opacity: 0.3;
+    z-index: 0;
+    pointer-events: none;
+    mask-image: radial-gradient(circle at center, #000 0%, transparent 70%);
+    -webkit-mask-image: radial-gradient(circle at center, #000 0%, transparent 70%);
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    top: 64px; left: 50%;
+    transform: translateX(-50%);
+    width: 1100px; height: 720px;
+    background:
+      radial-gradient(circle at 30% 40%, hsl(248, 75%, 88%) 0%, transparent 55%),
+      radial-gradient(circle at 70% 60%, hsl(38, 90%, 90%) 0%, transparent 55%);
+    filter: blur(20px);
+    z-index: 0;
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  /* ============================================================
+     CENTERED STAGE
+     ============================================================ */
+  main {
+    padding-top: 128px;        /* 64 topbar + 64 breathing room */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding-bottom: 80px;
+    position: relative;
+    z-index: 1;
+  }
+  .stage {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+
+  /* ---------- floating illustrative cards orbiting the sign-in card ---------- */
+  .float-card {
+    position: absolute;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow:
+      0 12px 32px rgba(30,20,60,0.12),
+      0 2px 6px rgba(30,20,60,0.06);
+    padding: 10px 14px;
+    z-index: 1;
+    display: flex; align-items: center; gap: 10px;
+    pointer-events: none;
+  }
+  .float-card .icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .float-card .icon.brand   { background: var(--brand-50);   color: var(--brand-600);   }
+  .float-card .icon.success { background: var(--success-50); color: var(--success-600); }
+  .float-card .text { display: flex; flex-direction: column; gap: 2px; }
+  .float-card .title {
+    font-size: 12px; font-weight: 600; color: var(--neutral-900);
+    line-height: 1.3;
+  }
+  .float-card .sub {
+    font-size: 10px; font-weight: 400; color: var(--neutral-500);
+    line-height: 1.4;
+  }
+  .fc-escrow {
+    top: 40px;
+    left: -160px;
+    width: 200px;
+    animation: float1 7s ease-in-out infinite;
+  }
+  .fc-verified {
+    bottom: 100px;
+    right: -160px;
+    width: 200px;
+    animation: float2 8s ease-in-out infinite;
+  }
+  @keyframes float1 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+  @keyframes float2 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(7px)} }
+
+  /* ============================================================
+     CARD
+     ============================================================ */
+  .card {
+    width: 100%;
+    background: #fff;
+    border-radius: 16px;
+    padding: 48px;
+    box-sizing: border-box;
+    box-shadow:
+      0 2px 8px rgba(30,20,60,0.08),
+      0 4px 16px rgba(30,20,60,0.06);
+    position: relative;
+    z-index: 2;
+  }
+  /* brand accent pip on top edge */
+  .card::before {
+    content: '';
+    position: absolute;
+    top: -3px; left: 50%;
+    transform: translateX(-50%);
+    width: 56px; height: 5px;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, var(--brand-500), var(--warning-500), var(--success-500));
+  }
+
+  .card-head {
+    display: flex; flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .card-head .logo-mark { width: 40px; height: 40px; gap: 4px; }
+  .card-head h1 {
+    margin: 24px 0 0 0;
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    color: var(--neutral-900);
+    line-height: 1.25;
+  }
+  .card-head .sub {
+    margin: 8px 0 0 0;
+    font-size: 14px; font-weight: 400;
+    color: var(--neutral-500);
+    line-height: 1.55;
+  }
+
+  /* ---------- form ---------- */
+  form {
+    margin-top: 32px;
+    display: flex; flex-direction: column;
+    gap: 18px;
+  }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--neutral-900);
+  }
+  .input {
+    display: flex; align-items: center;
+    height: 46px;
+    background: transparent;          /* TRANSPARENT inputs */
+    border: 1px solid var(--neutral-300);
+    border-radius: 8px;
+    padding: 0 14px;
+    gap: 8px;
+    transition: background var(--dur-micro) var(--ease-out),
+                border-color var(--dur-micro) var(--ease-out),
+                box-shadow var(--dur-micro) var(--ease-out),
+                padding var(--dur-micro) var(--ease-out);
+  }
+  .input:hover { border-color: var(--neutral-400); }
+  .input:focus-within {
+    background: #fff;
+    border: 2px solid var(--brand-500);
+    box-shadow: 0 0 0 3px var(--brand-50);
+    padding: 0 13px;
+  }
+  .input-leading {
+    color: var(--neutral-400);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .input input {
+    flex: 1; min-width: 0; height: 100%;
+    border: 0; outline: 0; background: transparent;
+    font-size: 14px; font-weight: 400; color: var(--neutral-900);
+  }
+  .input input::placeholder { color: var(--neutral-400); }
+  .input-action {
+    background: transparent; border: 0; padding: 4px;
+    color: var(--neutral-500);
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 4px;
+  }
+  .input-action:hover { color: var(--neutral-700); }
+
+  .forgot-row {
+    margin-top: -2px;
+    display: flex; justify-content: flex-end;
+  }
+  .forgot-row a {
+    font-size: 13px; font-weight: 400;
+    color: var(--brand-600); text-decoration: none;
+  }
+  .forgot-row a:hover { color: var(--brand-700); }
+
+  .submit {
+    margin-top: 10px;
+    width: 100%;
+    height: 50px;
+    background: var(--brand-600);
+    color: #fff;
+    border: 0;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    box-shadow: 0 6px 18px hsla(248, 60%, 47%, 0.28),
+                0 1px 2px rgba(30,20,60,0.06);
+    transition: background var(--dur-micro) var(--ease-out),
+                transform 80ms var(--ease-out);
+  }
+  .submit:hover { background: var(--brand-700); }
+  .submit:active { transform: scale(0.99); }
+
+  /* biometrics */
+  .biometrics {
+    margin-top: 16px;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 8px;
+  }
+  .biometrics-label {
+    font-size: 12px; font-weight: 400;
+    color: var(--neutral-500);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .biometrics-label::before,
+  .biometrics-label::after {
+    content: '';
+    width: 16px; height: 1px; background: var(--neutral-200);
+  }
+  .biometrics-row {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+  }
+  .biometric {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: var(--brand-50);
+    color: var(--brand-600);
+    border: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: background var(--dur-micro) var(--ease-out),
+                color var(--dur-micro) var(--ease-out),
+                transform 80ms var(--ease-out);
+  }
+  .biometric:nth-child(2) {
+    background: var(--success-50);
+    color: var(--success-600);
+  }
+  .biometric:hover { transform: translateY(-2px); }
+
+  .divider {
+    display: flex; align-items: center; gap: 12px;
+    margin-top: 22px;
+    color: var(--neutral-400);
+    font-size: 12px; font-weight: 400;
+  }
+  .divider::before, .divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--neutral-200);
+  }
+  .sso {
+    margin-top: 14px;
+    width: 100%;
+    height: 50px;
+    background: #fff;
+    color: var(--neutral-900);
+    border: 1px solid var(--neutral-300);
+    border-radius: 8px;
+    font-size: 15px; font-weight: 600;
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 10px;
+    transition: background var(--dur-micro) var(--ease-out),
+                border-color var(--dur-micro) var(--ease-out);
+  }
+  .sso:hover {
+    background: var(--neutral-50);
+    border-color: var(--neutral-400);
+  }
+
+  .below-card {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 14px; font-weight: 400;
+    color: var(--neutral-500);
+    position: relative;
+    z-index: 2;
+  }
+  .below-card a {
+    color: var(--brand-600); text-decoration: none; margin-left: 4px;
+  }
+  .below-card a:hover { color: var(--brand-700); }
+</style>
+</head>
+<body data-screen-label="Sign in">
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="Landing Page.html" class="logo" aria-label="Setlarr home">
+      <span class="logo-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+      <span class="logo-word">Setlarr</span>
+    </a>
+    <div class="topbar-right">
+      <span class="muted">New to Setlarr?</span>
+      <a href="Sign Up Page.html">Create account</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="stage">
+
+    <!-- floating illustrative cards -->
+    <div class="float-card fc-escrow" aria-hidden="true">
+      <span class="icon brand">
+        <i data-lucide="lock" style="width:16px;height:16px;"></i>
+      </span>
+      <span class="text">
+        <span class="title">₦620,000 in escrow</span>
+        <span class="sub">Locked &middot; pending delivery</span>
+      </span>
+    </div>
+
+    <div class="float-card fc-verified" aria-hidden="true">
+      <span class="icon success">
+        <i data-lucide="badge-check" style="width:16px;height:16px;"></i>
+      </span>
+      <span class="text">
+        <span class="title">Verified seller</span>
+        <span class="sub">NIN &amp; BVN checked</span>
+      </span>
+    </div>
+
+    <!-- CARD -->
+    <div class="card">
+      <div class="card-head">
+        <span class="logo-mark" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </span>
+        <h1>Welcome back</h1>
+        <p class="sub">Sign in to your account</p>
+      </div>
+
+      <form onsubmit="event.preventDefault();">
+
+        <div class="field">
+          <label class="field-label" for="f-id">Email or phone</label>
+          <div class="input">
+            <span class="input-leading" aria-hidden="true">
+              <i data-lucide="at-sign" style="width:16px;height:16px;"></i>
+            </span>
+            <input id="f-id" name="identifier" type="text" autocomplete="username" placeholder="you@example.com or +234 801 234 5678" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="f-password">Password</label>
+          <div class="input">
+            <span class="input-leading" aria-hidden="true">
+              <i data-lucide="lock" style="width:16px;height:16px;"></i>
+            </span>
+            <input id="f-password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" />
+            <button type="button" class="input-action" id="toggle-pw" aria-label="Show password" aria-pressed="false">
+              <i data-lucide="eye" style="width:18px;height:18px;"></i>
+            </button>
+          </div>
+          <div class="forgot-row">
+            <a href="Forgot Password Flow.html">Forgot password?</a>
+          </div>
+        </div>
+
+        <button class="submit" type="submit">
+          Sign in
+          <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
+        </button>
+
+        <div class="biometrics">
+          <span class="biometrics-label">Or use biometrics</span>
+          <div class="biometrics-row">
+            <button type="button" class="biometric" aria-label="Sign in with fingerprint">
+              <i data-lucide="fingerprint" style="width:20px;height:20px;"></i>
+            </button>
+            <button type="button" class="biometric" aria-label="Sign in with Face ID">
+              <i data-lucide="scan-face" style="width:20px;height:20px;"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="divider"><span>or</span></div>
+
+        <button type="button" class="sso" aria-label="Continue with Google">
+          <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+            <path d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.91c1.7-1.57 2.69-3.88 2.69-6.62z" fill="#4285F4"/>
+            <path d="M9 18c2.43 0 4.47-.81 5.95-2.18l-2.9-2.26c-.81.54-1.84.86-3.05.86-2.34 0-4.33-1.58-5.04-3.7H.96v2.32A9 9 0 0 0 9 18z" fill="#34A853"/>
+            <path d="M3.96 10.72A5.41 5.41 0 0 1 3.68 9c0-.6.1-1.18.28-1.72V4.96H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.04l3-2.32z" fill="#FBBC05"/>
+            <path d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.59C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.96l3 2.32C4.67 5.16 6.66 3.58 9 3.58z" fill="#EA4335"/>
+          </svg>
+          Continue with Google
+        </button>
+
+      </form>
+    </div>
+
+    <p class="below-card">
+      Don't have an account?<a href="Sign Up Page.html">Sign up</a>
+    </p>
+  </div>
+</main>
+
+<script>
+  if (window.lucide && typeof lucide.createIcons === 'function') {
+    lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+  }
+  const pw = document.getElementById('f-password');
+  const tog = document.getElementById('toggle-pw');
+  if (pw && tog) {
+    tog.addEventListener('click', () => {
+      const showing = pw.type === 'text';
+      pw.type = showing ? 'password' : 'text';
+      tog.setAttribute('aria-pressed', String(!showing));
+      tog.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+      tog.innerHTML = '';
+      const i = document.createElement('i');
+      i.setAttribute('data-lucide', showing ? 'eye' : 'eye-off');
+      i.style.width = '18px';
+      i.style.height = '18px';
+      tog.appendChild(i);
+      if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+    });
+  }
+</script>
+
+</body>
+</html>

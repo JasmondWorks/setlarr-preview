@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Reviews · Setlarr</title>
+<meta name="viewport" content="width=1280" />
+<link rel="stylesheet" href="../colors_and_type.css" />
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  html, body { margin: 0; min-height: 100%; }
+  body { background: var(--neutral-50); color: var(--neutral-900); min-width: 1280px; }
+  button, input, textarea { font-family: inherit; }
+  button { cursor: pointer; }
+  a { text-decoration: none; color: inherit; }
+  [data-lucide] { display: inline-block; vertical-align: middle; }
+
+  .topbar { position: fixed; top: 0; left: 0; right: 0; height: 64px; background: #fff; border-bottom: 1px solid var(--neutral-200); z-index: 50; }
+  .topbar-inner { height: 100%; max-width: 1280px; margin: 0 auto; padding: 0 80px; display: flex; align-items: center; }
+  .logo { display: inline-flex; align-items: center; gap: 10px; }
+  .logo-mark { width: 28px; height: 28px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 3px; }
+  .logo-mark > span { background: var(--brand-600); border-radius: 3px; }
+  .logo-mark > span:nth-child(2) { background: var(--brand-500); }
+  .logo-mark > span:nth-child(3) { background: var(--brand-500); }
+  .logo-mark > span:nth-child(4) { background: var(--brand-700); }
+  .logo-word { font-size: 18px; font-weight: 600; color: var(--neutral-900); letter-spacing: -0.2px; }
+
+  main { padding: 96px 40px 80px; min-height: 100vh; box-sizing: border-box; }
+  .frame { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.4fr; gap: 32px; align-items: flex-start; }
+
+  .state-col { display: flex; flex-direction: column; }
+  .state-tag {
+    margin-bottom: 16px;
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; font-weight: 600;
+    color: var(--brand-700);
+    letter-spacing: 0.06em; text-transform: uppercase;
+    background: #fff;
+    padding: 6px 12px 6px 8px;
+    border-radius: 9999px;
+    box-shadow: var(--elevation-1);
+    align-self: flex-start;
+  }
+  .state-tag .n { width: 18px; height: 18px; border-radius: 9999px; background: var(--brand-100); color: var(--brand-700); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; }
+
+  /* state 1 modal */
+  .modal {
+    background: #fff;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 8px 24px rgba(30,20,60,0.10), 0 16px 48px rgba(30,20,60,0.08);
+    position: relative;
+  }
+  .close-btn { position: absolute; top: 16px; right: 16px; background: transparent; border: 0; color: var(--neutral-400); }
+  .modal h1 { margin: 0; font-size: 20px; font-weight: 600; color: var(--neutral-900); letter-spacing: -0.2px; }
+  .modal .sub { margin: 6px 0 0 0; font-size: 14px; color: var(--neutral-500); }
+
+  .seller-recap {
+    margin-top: 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .sr-avatar {
+    width: 44px; height: 44px; border-radius: 9999px;
+    background: linear-gradient(135deg, hsl(248, 70%, 88%), hsl(248, 70%, 78%));
+    color: var(--brand-900);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 600;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 3px var(--brand-50);
+  }
+  .sr-info { display: flex; flex-direction: column; gap: 2px; }
+  .sr-name { font-size: 15px; font-weight: 600; color: var(--neutral-900); }
+  .sr-listing { font-size: 13px; color: var(--neutral-500); }
+
+  .stars-row {
+    margin-top: 28px;
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px;
+  }
+  .star-pick {
+    background: transparent; border: 0; padding: 0;
+    color: var(--neutral-200);
+    cursor: pointer;
+    transition: color var(--dur-micro) var(--ease-out), transform 80ms var(--ease-out);
+  }
+  .star-pick.is-on { color: var(--warning-500); }
+  .star-pick:hover { transform: scale(1.08); }
+  .rating-label {
+    margin-top: 12px;
+    text-align: center;
+    font-size: 14px; font-weight: 600;
+    color: var(--neutral-900);
+  }
+
+  .label {
+    font-size: 11px; font-weight: 600;
+    color: var(--neutral-500);
+    letter-spacing: 0.06em; text-transform: uppercase;
+    margin-top: 24px;
+    margin-bottom: 8px;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .label::before { content: ''; width: 14px; height: 2px; background: var(--brand-600); border-radius: 9999px; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    height: 36px; padding: 0 14px;
+    border-radius: 9999px;
+    background: var(--neutral-100); color: var(--neutral-700);
+    border: 0;
+    font-size: 13px; font-weight: 600;
+  }
+  .chip.is-active { background: var(--brand-600); color: #fff; }
+
+  .textarea {
+    margin-top: 8px;
+    background: transparent;
+    border: 1px solid var(--neutral-300);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .textarea:focus-within { border-color: var(--brand-500); box-shadow: 0 0 0 3px var(--brand-50); }
+  .textarea textarea { width: 100%; min-height: 80px; resize: vertical; border: 0; outline: 0; background: transparent; font-size: 14px; line-height: 1.55; color: var(--neutral-900); }
+
+  .post-btn {
+    margin-top: 24px;
+    width: 100%; height: 48px;
+    background: var(--brand-600); color: #fff;
+    border: 0; border-radius: 8px;
+    font-size: 15px; font-weight: 600;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    box-shadow: 0 6px 18px hsla(248, 60%, 47%, 0.28), 0 1px 2px rgba(30,20,60,0.06);
+  }
+  .skip-btn {
+    margin: 12px auto 0;
+    display: block;
+    background: transparent; border: 0;
+    color: var(--brand-600); font-size: 13px;
+  }
+
+  /* state 2 */
+  .summary-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: var(--elevation-1);
+    display: flex; gap: 32px;
+  }
+  .summary-left { padding-right: 32px; border-right: 1px solid var(--neutral-200); }
+  .big-rating {
+    font-size: 48px; font-weight: 600;
+    color: var(--neutral-900);
+    letter-spacing: -1px;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .big-stars { color: var(--warning-500); font-size: 18px; margin-top: 8px; }
+  .total-reviews { font-size: 13px; color: var(--neutral-500); margin-top: 6px; }
+
+  .summary-right { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+  .rating-bar { display: flex; align-items: center; gap: 10px; font-size: 12px; }
+  .rating-bar .lbl { color: var(--neutral-500); width: 26px; }
+  .rating-bar .bar { flex: 1; height: 6px; background: var(--neutral-200); border-radius: 4px; overflow: hidden; }
+  .rating-bar .bar > span { display: block; height: 100%; background: var(--success-500); border-radius: 4px; }
+  .rating-bar .count { color: var(--neutral-500); width: 30px; text-align: right; font-variant-numeric: tabular-nums; }
+
+  .review-list { margin-top: 24px; display: flex; flex-direction: column; gap: 12px; }
+  .review {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: var(--elevation-1);
+  }
+  .review-head { display: flex; align-items: center; gap: 10px; }
+  .review-avatar {
+    width: 32px; height: 32px; border-radius: 9999px;
+    background: var(--brand-50); color: var(--brand-900);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600;
+  }
+  .review-name { font-size: 14px; font-weight: 600; color: var(--neutral-900); }
+  .review-date { margin-left: auto; font-size: 12px; color: var(--neutral-400); }
+  .review-stars { margin-top: 10px; color: var(--warning-500); letter-spacing: 2px; }
+  .review-text { margin-top: 8px; font-size: 14px; color: var(--neutral-700); line-height: 1.6; }
+  .reviews-page-h {
+    margin: 0;
+    font-size: 22px; font-weight: 600;
+    color: var(--neutral-900);
+    letter-spacing: -0.3px;
+  }
+  .reviews-page-sub { margin: 6px 0 16px 0; font-size: 14px; color: var(--neutral-500); }
+</style>
+</head>
+<body data-screen-label="Reviews">
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="Landing Page.html" class="logo">
+      <span class="logo-mark"><span></span><span></span><span></span><span></span></span>
+      <span class="logo-word">Setlarr</span>
+    </a>
+  </div>
+</header>
+
+<main>
+  <div class="frame">
+
+    <!-- STATE 1 — Leave review modal -->
+    <div class="state-col">
+      <span class="state-tag"><span class="n">1</span> Leave a review</span>
+      <div class="modal">
+        <button class="close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+        <h1>Rate your experience</h1>
+        <p class="sub">This helps other buyers make informed decisions.</p>
+
+        <div class="seller-recap">
+          <span class="sr-avatar">EO</span>
+          <div class="sr-info">
+            <span class="sr-name">Emeka Okafor</span>
+            <span class="sr-listing">iPhone 14 Pro Max · ₦420,000</span>
+          </div>
+        </div>
+
+        <div class="stars-row">
+          <button class="star-pick is-on"><i data-lucide="star" style="width:32px;height:32px;fill:currentColor;"></i></button>
+          <button class="star-pick is-on"><i data-lucide="star" style="width:32px;height:32px;fill:currentColor;"></i></button>
+          <button class="star-pick is-on"><i data-lucide="star" style="width:32px;height:32px;fill:currentColor;"></i></button>
+          <button class="star-pick"><i data-lucide="star" style="width:32px;height:32px;fill:currentColor;"></i></button>
+          <button class="star-pick"><i data-lucide="star" style="width:32px;height:32px;fill:currentColor;"></i></button>
+        </div>
+        <p class="rating-label">Good</p>
+
+        <span class="label">As described?</span>
+        <div class="chips">
+          <button class="chip is-active">Exactly as described</button>
+          <button class="chip">Mostly accurate</button>
+          <button class="chip">Inaccurate</button>
+        </div>
+
+        <span class="label">Write a review (optional)</span>
+        <div class="textarea"><textarea placeholder="Share details about your experience..."></textarea></div>
+
+        <button class="post-btn"><i data-lucide="send" style="width:16px;height:16px;"></i> Post review</button>
+        <button class="skip-btn">Skip for now</button>
+      </div>
+    </div>
+
+    <!-- STATE 2 — Reviews received -->
+    <div class="state-col">
+      <span class="state-tag"><span class="n">2</span> Reviews received</span>
+
+      <h1 class="reviews-page-h">Your reviews</h1>
+      <p class="reviews-page-sub">What buyers say about trading with you.</p>
+
+      <div class="summary-card">
+        <div class="summary-left">
+          <div class="big-rating">4.9</div>
+          <div class="big-stars">★ ★ ★ ★ ★</div>
+          <div class="total-reviews">47 reviews</div>
+        </div>
+        <div class="summary-right">
+          <div class="rating-bar"><span class="lbl">5 ★</span><div class="bar"><span style="width:81%;"></span></div><span class="count">38</span></div>
+          <div class="rating-bar"><span class="lbl">4 ★</span><div class="bar"><span style="width:13%;"></span></div><span class="count">6</span></div>
+          <div class="rating-bar"><span class="lbl">3 ★</span><div class="bar"><span style="width:4%;"></span></div><span class="count">2</span></div>
+          <div class="rating-bar"><span class="lbl">2 ★</span><div class="bar"><span style="width:2%;"></span></div><span class="count">1</span></div>
+          <div class="rating-bar"><span class="lbl">1 ★</span><div class="bar"><span style="width:0%;"></span></div><span class="count">0</span></div>
+        </div>
+      </div>
+
+      <div class="review-list">
+        <div class="review">
+          <div class="review-head">
+            <span class="review-avatar" style="background: hsl(38, 80%, 88%); color: hsl(38, 88%, 30%);">CN</span>
+            <span class="review-name">Chioma N.</span>
+            <span class="review-date">3 days ago</span>
+          </div>
+          <div class="review-stars">★ ★ ★ ★ ★</div>
+          <p class="review-text">Emeka was a pleasure to deal with. The MacBook arrived sealed exactly as described. Released the escrow within 30 minutes.</p>
+        </div>
+        <div class="review">
+          <div class="review-head">
+            <span class="review-avatar" style="background: hsl(152, 60%, 88%); color: var(--success-600);">EB</span>
+            <span class="review-name">Ebuka B.</span>
+            <span class="review-date">1 week ago</span>
+          </div>
+          <div class="review-stars">★ ★ ★ ★ ★</div>
+          <p class="review-text">Very responsive — replied in under 5 minutes every time. iPhone was exactly as advertised, battery health at 92%.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  if (window.lucide && typeof lucide.createIcons === 'function') {
+    lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+  }
+  const labels = ['Terrible','Bad','Good','Great','Excellent'];
+  document.querySelectorAll('.star-pick').forEach((s, i) => {
+    s.addEventListener('click', () => {
+      document.querySelectorAll('.star-pick').forEach((x, j) => x.classList.toggle('is-on', j <= i));
+      document.querySelector('.rating-label').textContent = labels[i];
+    });
+  });
+</script>
+
+</body>
+</html>

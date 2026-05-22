@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Verify your email · Setlarr</title>
+<meta name="viewport" content="width=1280" />
+<link rel="stylesheet" href="../colors_and_type.css" />
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  html, body { margin: 0; min-height: 100%; }
+  body { background: var(--neutral-50); color: var(--neutral-900); min-width: 1280px; min-height: 100vh; }
+  button, input { font-family: inherit; }
+  button { cursor: pointer; }
+  [data-lucide] { display: inline-block; vertical-align: middle; }
+
+  .topbar { position: fixed; top: 0; left: 0; right: 0; height: 64px; background: #fff; border-bottom: 1px solid var(--neutral-200); z-index: 50; }
+  .topbar-inner { height: 100%; max-width: 1280px; margin: 0 auto; padding: 0 80px; display: flex; align-items: center; }
+  .logo { display: inline-flex; align-items: center; gap: 10px; }
+  .logo-mark { width: 28px; height: 28px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 3px; }
+  .logo-mark > span { background: var(--brand-600); border-radius: 3px; }
+  .logo-mark > span:nth-child(2) { background: var(--brand-500); }
+  .logo-mark > span:nth-child(3) { background: var(--brand-500); }
+  .logo-mark > span:nth-child(4) { background: var(--brand-700); }
+  .logo-word { font-size: 18px; font-weight: 600; color: var(--neutral-900); letter-spacing: -0.2px; }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 64px 0 0 0;
+    background-image: radial-gradient(circle, hsl(248, 30%, 80%) 1px, transparent 1.4px);
+    background-size: 28px 28px;
+    opacity: 0.28;
+    z-index: 0; pointer-events: none;
+    mask-image: radial-gradient(circle at center, #000 0%, transparent 70%);
+    -webkit-mask-image: radial-gradient(circle at center, #000 0%, transparent 70%);
+  }
+  body::after {
+    content: '';
+    position: fixed; top: 64px; left: 50%; transform: translateX(-50%);
+    width: 1000px; height: 700px;
+    background:
+      radial-gradient(circle at 30% 40%, hsl(248, 75%, 88%) 0%, transparent 55%),
+      radial-gradient(circle at 70% 60%, hsl(38, 90%, 90%) 0%, transparent 55%);
+    filter: blur(20px);
+    z-index: 0;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  main {
+    padding-top: 128px;
+    padding-bottom: 80px;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    box-sizing: border-box;
+    position: relative; z-index: 1;
+  }
+
+  .card {
+    width: 100%; max-width: 480px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 48px;
+    box-sizing: border-box;
+    box-shadow: 0 2px 8px rgba(30,20,60,0.08), 0 4px 16px rgba(30,20,60,0.06);
+    position: relative;
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: -3px; left: 50%;
+    transform: translateX(-50%);
+    width: 56px; height: 5px;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, var(--brand-500), var(--warning-500), var(--success-500));
+  }
+
+  .icon-block {
+    width: 64px; height: 64px;
+    border-radius: 14px;
+    background: var(--brand-50);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    position: relative;
+  }
+  .icon-block .badge-dot {
+    position: absolute;
+    top: -2px; right: -2px;
+    width: 12px; height: 12px;
+    border-radius: 9999px;
+    background: var(--brand-600);
+    box-shadow: 0 0 0 3px var(--brand-50);
+  }
+
+  .card h1 {
+    margin: 0;
+    font-size: 26px; font-weight: 600;
+    letter-spacing: -0.3px;
+    color: var(--neutral-900);
+    text-align: center;
+  }
+  .card .sub1 {
+    margin: 12px 0 4px 0;
+    font-size: 15px; font-weight: 400;
+    color: var(--neutral-500);
+    text-align: center;
+  }
+  .card .email {
+    font-size: 15px; font-weight: 600;
+    color: var(--neutral-900);
+    text-align: center;
+    word-break: break-all;
+  }
+
+  .instr {
+    margin-top: 32px;
+    background: var(--neutral-100);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex; flex-direction: column;
+    gap: 12px;
+  }
+  .instr-step {
+    display: flex; align-items: center;
+    gap: 10px;
+  }
+  .instr-num {
+    width: 20px; height: 20px;
+    border-radius: 9999px;
+    background: var(--neutral-200);
+    color: var(--neutral-700);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600;
+    flex-shrink: 0;
+  }
+  .instr-text {
+    font-size: 13px; font-weight: 400;
+    color: var(--neutral-800);
+  }
+
+  .btn-primary {
+    margin-top: 32px;
+    width: 100%; height: 48px;
+    background: var(--brand-600);
+    color: #fff;
+    border: 0; border-radius: 8px;
+    font-size: 15px; font-weight: 600;
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 8px;
+    box-shadow: 0 6px 18px hsla(248, 60%, 47%, 0.28), 0 1px 2px rgba(30,20,60,0.06);
+  }
+  .btn-primary:hover { background: var(--brand-700); }
+
+  .resend {
+    margin-top: 16px;
+    text-align: center;
+  }
+  .resend button {
+    background: transparent; border: 0;
+    color: var(--brand-600);
+    font-size: 13px; font-weight: 400;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .resend button.is-success { color: var(--success-600); }
+  .resend button:hover { color: var(--brand-700); }
+
+  .signout-row {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--neutral-500);
+  }
+  .signout-row a {
+    color: var(--danger-600);
+    text-decoration: none;
+    margin-left: 4px;
+  }
+  .signout-row a:hover { color: var(--danger-900); }
+
+  .spam-note {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--neutral-400);
+  }
+</style>
+</head>
+<body data-screen-label="Verify email">
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="Landing Page.html" class="logo">
+      <span class="logo-mark"><span></span><span></span><span></span><span></span></span>
+      <span class="logo-word">Setlarr</span>
+    </a>
+  </div>
+</header>
+
+<main>
+  <div class="card">
+    <div class="icon-block">
+      <!-- envelope illustration -->
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect x="3" y="7" width="26" height="18" rx="3" fill="var(--neutral-200)" stroke="var(--brand-600)" stroke-width="2" />
+        <path d="M3 10 L16 18 L29 10" stroke="var(--brand-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+      </svg>
+      <span class="badge-dot" aria-hidden="true"></span>
+    </div>
+
+    <h1>Verify your email</h1>
+    <p class="sub1">We sent a verification link to</p>
+    <p class="email">adaeze@gmail.com</p>
+
+    <div class="instr">
+      <div class="instr-step">
+        <span class="instr-num">1</span>
+        <span class="instr-text">Open the email from Setlarr</span>
+      </div>
+      <div class="instr-step">
+        <span class="instr-num">2</span>
+        <span class="instr-text">Click the verification link</span>
+      </div>
+      <div class="instr-step">
+        <span class="instr-num">3</span>
+        <span class="instr-text">You'll be redirected back automatically</span>
+      </div>
+    </div>
+
+    <button class="btn-primary" type="button">
+      <i data-lucide="external-link" style="width:16px;height:16px;"></i>
+      Open email app
+    </button>
+
+    <div class="resend">
+      <button type="button" id="resend-btn">Resend verification email</button>
+    </div>
+
+    <p class="signout-row">
+      Wrong email address?
+      <a href="Sign In Page.html">Sign out</a>
+    </p>
+
+    <p class="spam-note">Didn't get the email? Check your spam folder.</p>
+  </div>
+</main>
+
+<script>
+  if (window.lucide && typeof lucide.createIcons === 'function') {
+    lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+  }
+  document.getElementById('resend-btn')?.addEventListener('click', (e) => {
+    const b = e.currentTarget;
+    b.classList.add('is-success');
+    b.innerHTML = '<i data-lucide="check" style="width:14px;height:14px;"></i> Resent! Check your inbox';
+    if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+  });
+</script>
+
+</body>
+</html>

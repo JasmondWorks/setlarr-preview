@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Checkout · Setlarr</title>
+<meta name="viewport" content="width=1280" />
+<link rel="stylesheet" href="../colors_and_type.css" />
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    background: var(--neutral-50);
+    color: var(--neutral-900);
+    min-width: 1280px;
+    min-height: 100vh;
+  }
+  button, input { font-family: inherit; }
+  button { cursor: pointer; }
+  a { text-decoration: none; color: inherit; }
+  [data-lucide] { display: inline-block; vertical-align: middle; }
+
+  /* ---------- topbar (no sidebar — focused flow) ---------- */
+  .topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 64px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px) saturate(140%);
+    border-bottom: 1px solid var(--neutral-200);
+    z-index: 50;
+  }
+  .topbar-inner {
+    height: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 80px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo { display: inline-flex; align-items: center; gap: 10px; }
+  .logo-mark {
+    width: 28px; height: 28px;
+    display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
+    gap: 3px; flex-shrink: 0;
+  }
+  .logo-mark > span { background: var(--brand-600); border-radius: 3px; }
+  .logo-mark > span:nth-child(2) { background: var(--brand-500); }
+  .logo-mark > span:nth-child(3) { background: var(--brand-500); }
+  .logo-mark > span:nth-child(4) { background: var(--brand-700); }
+  .logo-word { font-size: 18px; font-weight: 600; color: var(--neutral-900); letter-spacing: -0.2px; }
+  .secure-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 32px;
+    padding: 0 12px 0 8px;
+    background: var(--success-50);
+    color: var(--success-600);
+    font-size: 12px; font-weight: 600;
+    border-radius: 9999px;
+  }
+  .secure-pill .ico {
+    width: 18px; height: 18px;
+    border-radius: 9999px;
+    background: #fff;
+    color: var(--success-600);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+
+  /* ---------- page ---------- */
+  main { padding-top: 64px; }
+  .content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+    position: relative;
+    isolation: isolate;
+  }
+  .content::before {
+    content: '';
+    position: absolute;
+    top: 0; right: -40px;
+    width: 400px; height: 400px;
+    background-image: radial-gradient(circle, hsl(248, 30%, 84%) 1px, transparent 1.2px);
+    background-size: 22px 22px;
+    mask-image: radial-gradient(circle at top right, #000 0%, transparent 75%);
+    -webkit-mask-image: radial-gradient(circle at top right, #000 0%, transparent 75%);
+    z-index: -1;
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  /* breadcrumb */
+  .breadcrumb {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 400;
+    color: var(--neutral-400);
+  }
+  .breadcrumb a { color: var(--neutral-400); }
+  .breadcrumb a:hover { color: var(--neutral-700); }
+  .breadcrumb .current { color: var(--neutral-900); font-weight: 600; }
+  .breadcrumb .sep { color: var(--neutral-300); display: inline-flex; align-items: center; }
+
+  /* trust banner */
+  .trust-banner {
+    margin-top: 16px;
+    background: var(--brand-50);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex; align-items: flex-start; gap: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .trust-banner::after {
+    content: '';
+    position: absolute;
+    top: -50px; right: -50px;
+    width: 180px; height: 180px;
+    border-radius: 9999px;
+    background: radial-gradient(circle, hsl(248, 75%, 90%) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .trust-banner .ico {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: #fff;
+    color: var(--brand-600);
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: var(--elevation-1);
+    position: relative; z-index: 1;
+  }
+  .trust-banner .body { position: relative; z-index: 1; }
+  .trust-banner .title {
+    font-size: 15px; font-weight: 600;
+    color: var(--brand-900);
+    margin: 0;
+  }
+  .trust-banner .desc {
+    margin: 4px 0 0 0;
+    font-size: 13px; font-weight: 400;
+    color: var(--neutral-700);
+    line-height: 1.55;
+  }
+
+  /* 2-column */
+  .grid {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: 55% calc(45% - 32px);
+    gap: 32px;
+    align-items: flex-start;
+  }
+  .col-left { display: flex; flex-direction: column; gap: 24px; }
+
+  .section-label {
+    font-size: 11px; font-weight: 600;
+    color: var(--neutral-500);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .section-label::before {
+    content: '';
+    width: 14px; height: 2px;
+    background: var(--brand-600);
+    border-radius: 9999px;
+  }
+
+  /* panel base */
+  .panel {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: var(--elevation-1);
+  }
+
+  .order-row {
+    display: flex; align-items: center; gap: 14px;
+  }
+  .order-thumb {
+    width: 64px; height: 64px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, hsl(248, 50%, 92%), hsl(248, 40%, 80%));
+    color: hsl(248, 40%, 40%);
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .order-thumb::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.6) 1px, transparent 1.2px);
+    background-size: 10px 10px;
+    opacity: 0.55;
+  }
+  .order-thumb i, .order-thumb svg { position: relative; z-index: 1; }
+  .order-info { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .order-name { font-size: 15px; font-weight: 600; color: var(--neutral-900); }
+  .order-sub { font-size: 13px; color: var(--neutral-500); }
+  .order-price { font-size: 15px; font-weight: 600; color: var(--neutral-900); font-variant-numeric: tabular-nums; }
+
+  .divider { height: 1px; background: var(--neutral-200); margin: 20px 0; }
+
+  .fee-row {
+    display: flex; justify-content: space-between;
+    font-size: 14px;
+    color: var(--neutral-700);
+    padding: 4px 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .fee-row + .fee-row { margin-top: 4px; }
+  .fee-row .help {
+    color: var(--neutral-400);
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .total-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 18px;
+    color: var(--neutral-900);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    margin-top: 16px;
+  }
+  .total-row .lbl { font-weight: 400; color: var(--neutral-600); font-size: 14px; }
+  .total-row .amt-meta {
+    display: block;
+    font-size: 11px; font-weight: 400;
+    color: var(--neutral-500);
+    margin-top: 2px;
+    text-align: right;
+  }
+
+  /* payment row */
+  .pay-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 0;
+    cursor: pointer;
+  }
+  .pay-row + .pay-row { border-top: 1px solid var(--neutral-200); }
+  .pay-ico {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: var(--neutral-100);
+    color: var(--neutral-700);
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .pay-ico.brand { background: var(--brand-50); color: var(--brand-600); }
+  .pay-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .pay-name { font-size: 14px; font-weight: 600; color: var(--neutral-900); }
+  .pay-meta { font-size: 12px; color: var(--neutral-500); }
+  .pay-radio {
+    width: 20px; height: 20px;
+    border-radius: 9999px;
+    border: 1.5px solid var(--neutral-300);
+    background: #fff;
+    flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: all var(--dur-micro) var(--ease-out);
+  }
+  .pay-row.is-selected .pay-radio {
+    border-color: var(--brand-600);
+    background: var(--brand-600);
+  }
+  .pay-radio::after {
+    content: '';
+    width: 8px; height: 8px;
+    border-radius: 9999px;
+    background: transparent;
+  }
+  .pay-row.is-selected .pay-radio::after { background: #fff; }
+
+  .lock-cta {
+    width: 100%;
+    height: 52px;
+    background: var(--brand-600);
+    color: #fff;
+    border: 0;
+    border-radius: 8px;
+    font-size: 15px; font-weight: 600;
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 8px;
+    box-shadow: 0 6px 18px hsla(248, 60%, 47%, 0.28), 0 1px 2px rgba(30,20,60,0.06);
+    transition: background var(--dur-micro) var(--ease-out),
+                transform 80ms var(--ease-out);
+  }
+  .lock-cta:hover { background: var(--brand-700); }
+  .lock-cta:active { transform: scale(0.99); }
+
+  /* RIGHT: sticky item summary */
+  .col-right {
+    position: sticky;
+    top: 88px;
+  }
+  .sticky-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: var(--elevation-2);
+  }
+  .sticky-img {
+    height: 140px;
+    background: linear-gradient(135deg, hsl(248, 50%, 92%), hsl(248, 40%, 80%));
+    color: hsl(248, 40%, 40%);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .sticky-img::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.6) 1px, transparent 1.2px);
+    background-size: 14px 14px;
+    opacity: 0.55;
+  }
+  .sticky-img i, .sticky-img svg { position: relative; z-index: 1; }
+  .sticky-name {
+    margin: 16px 0 0 0;
+    font-size: 16px; font-weight: 600;
+    color: var(--neutral-900);
+    line-height: 1.3;
+  }
+  .sticky-seller {
+    margin-top: 4px;
+    font-size: 13px; color: var(--neutral-500);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .sticky-seller .star { color: var(--warning-500); }
+
+  /* timeline */
+  .timeline {
+    margin-top: 24px;
+    list-style: none;
+    padding: 0;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .tl-step {
+    display: flex; align-items: flex-start;
+    gap: 12px;
+    padding-bottom: 20px;
+    position: relative;
+  }
+  .tl-step:last-child { padding-bottom: 0; }
+  .tl-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 11px; top: 24px; bottom: 0;
+    width: 2px;
+    background: var(--neutral-200);
+  }
+  .tl-step.is-complete:not(:last-child)::after { background: var(--brand-600); }
+  .tl-circle {
+    width: 24px; height: 24px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    background: var(--neutral-200);
+    color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    position: relative;
+    z-index: 1;
+  }
+  .tl-step.is-complete .tl-circle { background: var(--brand-600); }
+  .tl-step.is-active .tl-circle {
+    background: #fff;
+    border: 2px solid var(--brand-600);
+    box-shadow: 0 0 0 4px var(--brand-50);
+  }
+  .tl-step.is-active .tl-circle::after {
+    content: '';
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    background: var(--brand-600);
+  }
+  .tl-step .tl-circle svg { display: none; }
+  .tl-step.is-complete .tl-circle svg { display: block; }
+  .tl-text { display: flex; flex-direction: column; gap: 2px; padding-top: 2px; }
+  .tl-label {
+    font-size: 13px; font-weight: 600;
+    color: var(--neutral-900);
+    line-height: 1.3;
+  }
+  .tl-step.is-inactive .tl-label { color: var(--neutral-400); font-weight: 400; }
+  .tl-sub { font-size: 11px; font-weight: 400; color: var(--neutral-500); }
+</style>
+</head>
+<body data-screen-label="Checkout">
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="Landing Page.html" class="logo" aria-label="Setlarr home">
+      <span class="logo-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+      <span class="logo-word">Setlarr</span>
+    </a>
+    <span class="secure-pill">
+      <span class="ico"><i data-lucide="lock" style="width:11px;height:11px;"></i></span>
+      Secure checkout
+    </span>
+  </div>
+</header>
+
+<main>
+  <div class="content">
+
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="Listing Detail Page.html">Listing</a>
+      <span class="sep"><i data-lucide="chevron-right" style="width:12px;height:12px;"></i></span>
+      <span class="current">Checkout</span>
+      <span class="sep"><i data-lucide="chevron-right" style="width:12px;height:12px;"></i></span>
+      <span>Confirmation</span>
+    </nav>
+
+    <!-- trust banner -->
+    <div class="trust-banner">
+      <span class="ico" aria-hidden="true">
+        <i data-lucide="shield-check" style="width:22px;height:22px;"></i>
+      </span>
+      <div class="body">
+        <p class="title">Your payment is held in escrow</p>
+        <p class="desc">Setlarr holds your money safely until you've received and inspected the item. Funds release only when you're happy — or refund if something's wrong.</p>
+      </div>
+    </div>
+
+    <div class="grid">
+
+      <!-- LEFT -->
+      <div class="col-left">
+
+        <!-- Order summary -->
+        <div class="panel">
+          <div class="section-label">Order summary</div>
+
+          <div class="order-row">
+            <div class="order-thumb"><i data-lucide="smartphone" style="width:28px;height:28px;"></i></div>
+            <div class="order-info">
+              <span class="order-name">iPhone 14 Pro Max · 256GB</span>
+              <span class="order-sub">Sold by Emeka Okafor · Lekki, Lagos</span>
+            </div>
+            <span class="order-price">₦420,000</span>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="fee-row">
+            <span>Item price</span>
+            <span>₦420,000</span>
+          </div>
+          <div class="fee-row">
+            <span class="help">
+              Escrow fee
+              <i data-lucide="help-circle" style="width:13px;height:13px;"></i>
+            </span>
+            <span>₦8,400</span>
+          </div>
+          <div class="fee-row">
+            <span class="help">
+              Verified courier delivery
+              <i data-lucide="help-circle" style="width:13px;height:13px;"></i>
+            </span>
+            <span>₦6,300</span>
+          </div>
+
+          <div class="total-row">
+            <span class="lbl">Total to lock in escrow</span>
+            <span>
+              ₦434,700
+              <span class="amt-meta">Refundable if dispute is upheld</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Payment method -->
+        <div class="panel">
+          <div class="section-label">Payment method</div>
+
+          <div class="pay-row is-selected">
+            <span class="pay-ico brand"><i data-lucide="credit-card" style="width:20px;height:20px;"></i></span>
+            <div class="pay-info">
+              <span class="pay-name">Mastercard •• 4827</span>
+              <span class="pay-meta">Expires 09/27 · default card</span>
+            </div>
+            <span class="pay-radio" aria-hidden="true"></span>
+          </div>
+
+          <div class="pay-row">
+            <span class="pay-ico"><i data-lucide="banknote" style="width:20px;height:20px;"></i></span>
+            <div class="pay-info">
+              <span class="pay-name">Pay with bank transfer</span>
+              <span class="pay-meta">Get a one-time virtual account number</span>
+            </div>
+            <span class="pay-radio" aria-hidden="true"></span>
+          </div>
+        </div>
+
+        <button class="lock-cta" type="button">
+          <i data-lucide="lock" style="width:16px;height:16px;"></i>
+          Lock ₦434,700 in escrow
+        </button>
+
+      </div>
+
+      <!-- RIGHT: sticky -->
+      <aside class="col-right" aria-label="Order">
+        <div class="sticky-card">
+          <div class="sticky-img">
+            <i data-lucide="smartphone" style="width:64px;height:64px;"></i>
+          </div>
+          <p class="sticky-name">iPhone 14 Pro Max · 256GB Deep Purple</p>
+          <p class="sticky-seller">
+            Emeka Okafor
+            <span style="color: var(--neutral-300);">·</span>
+            <span class="star">★</span>
+            <span style="color: var(--neutral-900); font-weight: 600;">4.9</span>
+          </p>
+
+          <ol class="timeline" aria-label="Escrow timeline">
+            <li class="tl-step is-complete">
+              <span class="tl-circle">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+              <span class="tl-text">
+                <span class="tl-label">Payment locked</span>
+                <span class="tl-sub">Just now</span>
+              </span>
+            </li>
+            <li class="tl-step is-active">
+              <span class="tl-circle"></span>
+              <span class="tl-text">
+                <span class="tl-label">Item shipped</span>
+                <span class="tl-sub">Seller has up to 48h to ship</span>
+              </span>
+            </li>
+            <li class="tl-step is-inactive">
+              <span class="tl-circle"></span>
+              <span class="tl-text">
+                <span class="tl-label">Inspection window</span>
+                <span class="tl-sub">48h to check the item</span>
+              </span>
+            </li>
+            <li class="tl-step is-inactive">
+              <span class="tl-circle"></span>
+              <span class="tl-text">
+                <span class="tl-label">Funds released</span>
+                <span class="tl-sub">Seller is paid out</span>
+              </span>
+            </li>
+          </ol>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</main>
+
+<script>
+  if (window.lucide && typeof lucide.createIcons === 'function') {
+    lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+  }
+  document.querySelectorAll('.pay-row').forEach(r => {
+    r.addEventListener('click', () => {
+      document.querySelectorAll('.pay-row').forEach(x => x.classList.remove('is-selected'));
+      r.classList.add('is-selected');
+    });
+  });
+</script>
+
+</body>
+</html>
