@@ -1,0 +1,25 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Status badges</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px; background: var(--bg-surface); display:flex; flex-wrap:wrap; gap:10px; align-items:center;}
+  .badge { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:9999px; font-size:11px; font-weight:600; }
+  .dot { width:6px; height:6px; border-radius:9999px;}
+  .verified  { background:var(--success-50); color:var(--success-900); }
+  .verified .dot { background: var(--success-500); }
+  .escrow    { background:var(--brand-50); color:var(--brand-900); }
+  .escrow .dot { background: var(--brand-500); }
+  .pending   { background:var(--warning-50); color:var(--warning-900); }
+  .pending .dot { background: var(--warning-500); }
+  .disputed  { background:var(--danger-50); color:var(--danger-900); }
+  .disputed .dot { background: var(--danger-500); }
+  .inactive  { background:var(--neutral-100); color:var(--neutral-600); }
+  .inactive .dot { background: var(--neutral-400); }
+</style></head>
+<body>
+  <span class="badge verified"><span class="dot"></span>Verified</span>
+  <span class="badge escrow"><span class="dot"></span>In escrow</span>
+  <span class="badge pending"><span class="dot"></span>Pending</span>
+  <span class="badge disputed"><span class="dot"></span>Disputed</span>
+  <span class="badge inactive"><span class="dot"></span>Inactive</span>
+</body></html>

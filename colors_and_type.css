@@ -1,0 +1,210 @@
+/* ============================================================
+   SETLARR DESIGN TOKENS
+   Light mode. Inter only. 4px grid. Two weights (400, 600).
+   Import once at the root of any Setlarr surface.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+:root {
+  /* ---------- NEUTRAL SCALE (warm-tinted) ---------- */
+  --neutral-50:  hsl(240, 20%, 98%);
+  --neutral-100: hsl(240, 16%, 95%);
+  --neutral-200: hsl(240, 12%, 90%);
+  --neutral-300: hsl(240, 10%, 82%);
+  --neutral-400: hsl(240,  8%, 65%);
+  --neutral-500: hsl(240,  8%, 50%);
+  --neutral-600: hsl(240,  8%, 38%);
+  --neutral-700: hsl(240,  8%, 26%);
+  --neutral-900: hsl(240, 12%, 12%);
+
+  /* ---------- BRAND (warm indigo) ---------- */
+  --brand-50:  hsl(248, 80%, 96%);
+  --brand-100: hsl(248, 75%, 91%);
+  --brand-200: hsl(248, 72%, 84%);
+  --brand-500: hsl(248, 62%, 55%);
+  --brand-600: hsl(248, 60%, 47%);
+  --brand-700: hsl(248, 60%, 39%);
+  --brand-900: hsl(248, 62%, 18%);
+
+  /* ---------- SUCCESS (green) ---------- */
+  --success-50:  hsl(152, 70%, 95%);
+  --success-200: hsl(152, 60%, 80%);
+  --success-500: hsl(152, 55%, 40%);
+  --success-600: hsl(152, 60%, 32%);
+  --success-900: hsl(152, 65%, 12%);
+
+  /* ---------- WARNING (amber) ---------- */
+  --warning-50:  hsl(38, 95%, 95%);
+  --warning-200: hsl(38, 90%, 80%);
+  --warning-500: hsl(38, 85%, 50%);
+  --warning-600: hsl(38, 88%, 40%);
+  --warning-900: hsl(38, 90%, 14%);
+
+  /* ---------- DANGER (red) ---------- */
+  --danger-50:  hsl(4, 80%, 96%);
+  --danger-200: hsl(4, 75%, 84%);
+  --danger-500: hsl(4, 72%, 52%);
+  --danger-600: hsl(4, 75%, 42%);
+  --danger-900: hsl(4, 78%, 14%);
+
+  /* ---------- SEMANTIC: TEXT ---------- */
+  --text-primary:   var(--neutral-900);
+  --text-secondary: var(--neutral-500);
+  --text-tertiary:  var(--neutral-400);
+  --text-inverse:   #ffffff;
+  --text-brand:     var(--brand-600);
+  --text-success:   var(--success-600);
+  --text-warning:   var(--warning-600);
+  --text-danger:    var(--danger-600);
+
+  /* ---------- SEMANTIC: BG ---------- */
+  --bg-page:         var(--neutral-50);
+  --bg-surface:      #ffffff;
+  --bg-subtle:       var(--neutral-100);
+  --bg-brand-tint:   var(--brand-50);
+  --bg-success-tint: var(--success-50);
+  --bg-warning-tint: var(--warning-50);
+  --bg-danger-tint:  var(--danger-50);
+
+  /* ---------- SEMANTIC: BORDER ---------- */
+  --border-subtle:  var(--neutral-200);
+  --border-default: var(--neutral-300);
+  --border-focus:   var(--brand-500);
+
+  /* ---------- SEMANTIC: ICON ---------- */
+  --icon-default: var(--neutral-400);
+  --icon-active:  var(--neutral-900);
+  --icon-brand:   var(--brand-600);
+
+  /* ---------- TYPE ---------- */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --fw-regular: 400;
+  --fw-semibold: 600;
+
+  /* Type ramp: size / line-height / tracking */
+  --t-display-size: 28px;     --t-display-lh: 1.20;  --t-display-tr: -0.5px;
+  --t-h1-size:      22px;     --t-h1-lh:      1.25;  --t-h1-tr:      -0.3px;
+  --t-h2-size:      18px;     --t-h2-lh:      1.30;  --t-h2-tr:      -0.2px;
+  --t-h3-size:      15px;     --t-h3-lh:      1.35;  --t-h3-tr:      0;
+  --t-body-lg-size: 16px;     --t-body-lg-lh: 1.65;
+  --t-body-size:    14px;     --t-body-lh:    1.65;
+  --t-label-size:   12px;     --t-label-lh:   1.40;  --t-label-tr:   0.04em;
+  --t-caption-size: 12px;     --t-caption-lh: 1.50;
+  --t-micro-size:   11px;     --t-micro-lh:   1.40;
+
+  /* ---------- SPACING (4px grid) ---------- */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ---------- RADIUS ---------- */
+  --radius-xs:   4px;
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   16px;
+  --radius-xl:   20px;
+  --radius-pill: 9999px;
+
+  /* ---------- ELEVATION ---------- */
+  --elevation-0: none;
+  --elevation-1: 0 1px 2px rgba(30,20,60,0.06), 0 1px 4px rgba(30,20,60,0.04);
+  --elevation-2: 0 2px 8px rgba(30,20,60,0.08), 0 4px 16px rgba(30,20,60,0.06);
+  --elevation-3: 0 8px 24px rgba(30,20,60,0.10), 0 16px 48px rgba(30,20,60,0.08);
+
+  /* ---------- MOTION ---------- */
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --dur-micro:    120ms;
+  --dur-standard: 200ms;
+  --dur-large:    320ms;
+}
+
+/* ============================================================
+   TYPE PRIMITIVES — apply by class for semantic styling.
+   Use these so weights stay locked at 400 / 600.
+   ============================================================ */
+
+html, body {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--text-primary);
+  background: var(--bg-page);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.t-display {
+  font-size: var(--t-display-size);
+  line-height: var(--t-display-lh);
+  letter-spacing: var(--t-display-tr);
+  font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+}
+.t-h1 {
+  font-size: var(--t-h1-size);
+  line-height: var(--t-h1-lh);
+  letter-spacing: var(--t-h1-tr);
+  font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+}
+.t-h2 {
+  font-size: var(--t-h2-size);
+  line-height: var(--t-h2-lh);
+  letter-spacing: var(--t-h2-tr);
+  font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+}
+.t-h3 {
+  font-size: var(--t-h3-size);
+  line-height: var(--t-h3-lh);
+  font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+}
+.t-body-lg {
+  font-size: var(--t-body-lg-size);
+  line-height: var(--t-body-lg-lh);
+  font-weight: var(--fw-regular);
+  color: var(--text-primary);
+}
+.t-body {
+  font-size: var(--t-body-size);
+  line-height: var(--t-body-lh);
+  font-weight: var(--fw-regular);
+  color: var(--text-primary);
+}
+.t-label {
+  font-size: var(--t-label-size);
+  line-height: var(--t-label-lh);
+  letter-spacing: var(--t-label-tr);
+  font-weight: var(--fw-semibold);
+  color: var(--neutral-700);
+  text-transform: uppercase;
+}
+.t-caption {
+  font-size: var(--t-caption-size);
+  line-height: var(--t-caption-lh);
+  font-weight: var(--fw-regular);
+  color: var(--text-secondary);
+}
+.t-micro {
+  font-size: var(--t-micro-size);
+  line-height: var(--t-micro-lh);
+  font-weight: var(--fw-regular);
+  color: var(--text-secondary);
+}
+
+/* ============================================================
+   ELEMENT DEFAULTS
+   ============================================================ */
+* { box-sizing: border-box; }
+h1, h2, h3, h4 { margin: 0; }
+p { margin: 0 0 12px 0; }
+button { font-family: inherit; }

@@ -1,0 +1,43 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Inputs</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:20px 24px; background: var(--bg-surface); display:flex; flex-direction:column; gap:14px;}
+  .field { display:flex; flex-direction:column; gap:8px; }
+  .lbl { font-size:12px; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; color:var(--neutral-700);}
+  .input {
+    height:44px; padding:0 16px;
+    background: var(--neutral-100); border: 1px solid var(--neutral-300);
+    border-radius:6px; font-size:14px; color: var(--neutral-900); font-family:inherit;
+  }
+  .input::placeholder { color: var(--neutral-400); }
+  .focused {
+    background:#fff; border:2px solid var(--brand-500);
+    box-shadow: 0 0 0 3px var(--brand-50);
+    padding:0 15px;
+  }
+  .err {
+    background: var(--danger-50); border:2px solid var(--danger-500);
+    box-shadow: 0 0 0 3px var(--danger-50);
+    padding:0 15px; color: var(--danger-900);
+  }
+  .err-msg { font-size:12px; color: var(--danger-600); }
+  .row { display:grid; grid-template-columns: 1fr 1fr; gap:18px; }
+</style></head>
+<body>
+  <div class="row">
+    <div class="field">
+      <div class="lbl">Email address</div>
+      <input class="input" placeholder="you@email.com" />
+    </div>
+    <div class="field">
+      <div class="lbl">Phone (focused)</div>
+      <input class="input focused" value="+234 803 4421 008" />
+    </div>
+  </div>
+  <div class="field">
+    <div class="lbl">Card number</div>
+    <input class="input err" value="5061 0000 0000 04" />
+    <div class="err-msg">This card number doesn't look right. Check the last 4 digits.</div>
+  </div>
+</body></html>

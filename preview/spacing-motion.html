@@ -1,0 +1,24 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Motion</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:20px 24px; background: var(--bg-surface); display:flex; flex-direction:column; gap:14px;}
+  .head { font-size:10px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:var(--neutral-500); }
+  .row { display:flex; gap:10px; align-items:center; }
+  .dur { display:flex; flex-direction:column; align-items:flex-start; gap:6px; padding:10px 12px; background:var(--neutral-100); border-radius:8px; flex:1;}
+  .dur .v { font-size:13px; font-weight:600; color: var(--neutral-900);}
+  .dur .u { font-size:11px; color: var(--neutral-500);}
+  .ease { padding:10px 12px; background:var(--brand-50); border-radius:8px; color:var(--brand-900); font-family: ui-monospace, SFMono-Regular, monospace; font-size:11px;}
+  .rule { font-size:11px; color: var(--neutral-500); font-style:italic;}
+</style></head>
+<body>
+  <div class="head">Easing</div>
+  <div class="ease">cubic-bezier(0.2, 0, 0, 1) · fast-out, slow-arrive · no overshoot, no spring</div>
+  <div class="head">Durations</div>
+  <div class="row">
+    <div class="dur"><div class="v">120ms</div><div class="u">Micro — icon swap, badge flip</div></div>
+    <div class="dur"><div class="v">200ms</div><div class="u">Standard — sheet, modal, dropdown</div></div>
+    <div class="dur"><div class="v">320ms</div><div class="u">Large — page transitions</div></div>
+  </div>
+  <div class="rule">Fades pair with a 4px transform — content slides into place while fading, never just opacity.</div>
+</body></html>

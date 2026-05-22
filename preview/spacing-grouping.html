@@ -1,0 +1,35 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Spacing in use — grouping</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:18px 24px; background: var(--bg-surface); display:grid; grid-template-columns: 1fr 1fr; gap:20px;}
+  .group { padding:0; }
+  .lbl { font-size:10px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:var(--neutral-500); margin-bottom:12px;}
+  .item { display:flex; flex-direction:column; gap:2px; }
+  .item .k { font-size:11px; font-weight:600; color:var(--neutral-700); letter-spacing:0.04em; text-transform:uppercase;}
+  .item .v { font-size:14px; color:var(--neutral-900); }
+  .tight { display:flex; flex-direction:column; gap:12px; }
+  .loose1 { display:flex; flex-direction:column; gap:12px; margin-bottom:32px; }
+  .note { font-size:10px; color:var(--neutral-500); font-style:italic; margin-top:10px; }
+</style></head>
+<body>
+  <div class="group">
+    <div class="lbl">Within group · 12px</div>
+    <div class="tight">
+      <div class="item"><div class="k">Holder</div><div class="v">Adaeze Okafor</div></div>
+      <div class="item"><div class="k">Account</div><div class="v">2058 3304 17</div></div>
+      <div class="item"><div class="k">Bank</div><div class="v">GTBank</div></div>
+    </div>
+    <div class="note">Tight gaps bind these as one block.</div>
+  </div>
+  <div class="group">
+    <div class="lbl">Between groups · 32px</div>
+    <div class="loose1">
+      <div class="item"><div class="k">Buyer</div><div class="v">Adaeze Okafor</div></div>
+    </div>
+    <div>
+      <div class="item"><div class="k">Item</div><div class="v">iPhone 14 Pro · 256GB</div></div>
+    </div>
+    <div class="note">Loose gap separates them without a divider.</div>
+  </div>
+</body></html>

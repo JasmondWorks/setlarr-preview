@@ -1,0 +1,36 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Buttons</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:20px 24px; background: var(--bg-surface); display:flex; flex-direction:column; gap:10px;}
+  .row { display:flex; gap:10px; align-items:center; }
+  .btn {
+    height:44px; padding:0 18px; border-radius:6px;
+    font-size:14px; font-weight:600; font-family:inherit;
+    border:0; cursor:pointer; display:inline-flex; align-items:center; justify-content:center;
+    transition: background var(--dur-micro) var(--ease-out);
+  }
+  .primary { background: var(--brand-600); color:#fff; }
+  .primary:hover { background: var(--brand-700); }
+  .secondary { background: var(--neutral-100); color: var(--neutral-900); border:1px solid var(--neutral-300); }
+  .ghost { background: transparent; color: var(--brand-600); }
+  .danger-ghost { background: transparent; color: var(--danger-600); font-weight: 400; border:1px solid var(--danger-200); }
+  .disabled { background: var(--neutral-200); color: var(--neutral-400); cursor:not-allowed;}
+  .meta { font-size:10px; color:var(--neutral-500); margin-left:4px; }
+</style></head>
+<body>
+  <div class="row">
+    <button class="btn primary">Lock ₦434,700 in escrow</button>
+    <span class="meta">Primary · brand-600 · one per screen</span>
+  </div>
+  <div class="row">
+    <button class="btn secondary">Save for later</button>
+    <button class="btn ghost">View details</button>
+    <span class="meta">Secondary &amp; ghost</span>
+  </div>
+  <div class="row">
+    <button class="btn danger-ghost">Cancel order</button>
+    <button class="btn disabled" disabled>Lock in escrow</button>
+    <span class="meta">Danger ghost · disabled</span>
+  </div>
+</body></html>

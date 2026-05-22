@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Setlarr · UI kit</title>
+  <link rel="stylesheet" href="../../colors_and_type.css">
+  <style>
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(1200px 600px at 80% -10%, hsl(248, 80%, 96%) 0%, transparent 60%),
+        radial-gradient(900px 500px at -10% 100%, hsl(38, 95%, 95%) 0%, transparent 60%),
+        hsl(240, 20%, 98%);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px;
+    }
+    .stage {
+      display: flex;
+      gap: 48px;
+      align-items: flex-start;
+      max-width: 1200px;
+      width: 100%;
+    }
+    .info {
+      flex: 1;
+      max-width: 380px;
+      padding-top: 32px;
+    }
+    .info .eyebrow {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      color: hsl(248, 60%, 47%); margin-bottom: 12px;
+    }
+    .info h1 {
+      font-size: 36px; font-weight: 600; letter-spacing: -0.6px; line-height: 1.15;
+      color: hsl(240, 12%, 12%); margin: 0 0 16px;
+    }
+    .info p {
+      font-size: 14px; line-height: 1.65; color: hsl(240, 8%, 38%); margin: 0 0 24px;
+    }
+    .screen-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .screen-chip {
+      padding: 6px 12px; border-radius: 9999px;
+      font-size: 12px; font-weight: 600;
+      background: hsl(240, 16%, 95%);
+      color: hsl(240, 8%, 38%);
+      border: 0; cursor: pointer;
+      transition: all 120ms cubic-bezier(0.2, 0, 0, 1);
+      font-family: inherit;
+    }
+    .screen-chip.active {
+      background: hsl(240, 12%, 12%);
+      color: white;
+    }
+    .device-wrap { display: flex; justify-content: center; }
+    #root { display: contents; }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="info">
+      <div class="eyebrow">setlarr · ui kit</div>
+      <h1>The marketplace, with the money held in the middle.</h1>
+      <p>A click-through of the Setlarr mobile app: browse, lock funds in escrow, manage active orders, and post a new listing. Every screen uses the design-system primitives — buttons, badges, list rows — defined in this folder.</p>
+      <div id="chips" class="screen-chips"></div>
+    </div>
+    <div class="device-wrap" id="device-mount"></div>
+  </div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script type="text/babel" src="ios-frame.jsx"></script>
+  <script type="text/babel" src="icons.jsx"></script>
+  <script type="text/babel" src="components.jsx"></script>
+  <script type="text/babel" src="screens.jsx"></script>
+
+  <script type="text/babel">
+    function App() {
+      const [screen, setScreen] = React.useState('home');
+      const [params, setParams] = React.useState({});
+      const goto = (s, p = {}) => { setScreen(s); setParams(p); };
+
+      // Map nav tabs to screen ids
+      const tabFor = { home: 'home', search: 'search', chats: 'chats', you: 'you', sell: 'sell' };
+      const activeTab =
+        ['listing','confirm','success'].includes(screen) ? 'home' :
+        screen === 'wallet' ? 'you' :
+        tabFor[screen] || 'home';
+
+      let content = null;
+      if (screen === 'home') content = <HomeScreen goto={goto} />;
+      else if (screen === 'listing') content = <ListingScreen goto={goto} params={params} />;
+      else if (screen === 'confirm') content = <ConfirmScreen goto={goto} params={params} />;
+      else if (screen === 'success') content = <SuccessScreen goto={goto} params={params} />;
+      else if (screen === 'wallet') content = <WalletScreen goto={goto} />;
+      else if (screen === 'sell') content = <SellScreen goto={goto} />;
+      else if (screen === 'you') content = <YouScreen goto={goto} />;
+      else if (screen === 'search') content = <SearchScreen goto={goto} />;
+      else if (screen === 'chats') content = <ChatsScreen goto={goto} />;
+
+      // hide bottom nav on full-screen flows like the success screen + confirm
+      const hideNav = screen === 'success';
+      const hideTopBar = screen === 'success';
+
+      // Render device
+      const view = (
+        <IOSDevice width={390} height={820}>
+          <div style={{
+            position: 'relative', height: '100%', overflow: 'hidden',
+            background: '#fff',
+          }}>
+            <div style={{
+              height: '100%', overflow: 'auto', paddingTop: hideTopBar ? 56 : 0, paddingBottom: 0,
+              background: screen === 'home' || screen === 'search' || screen === 'you' || screen === 'wallet' || screen === 'chats' ? '#fff' : '#fff',
+            }}>
+              {content}
+            </div>
+            {!hideNav && (
+              <BottomNav active={activeTab} onChange={(t) => {
+                if (t === 'sell') goto('sell');
+                else goto(t);
+              }}/>
+            )}
+          </div>
+        </IOSDevice>
+      );
+
+      // Screen chips
+      const screens = [
+        ['home', 'Home'],
+        ['listing', 'Listing'],
+        ['confirm', 'Confirm'],
+        ['success', 'Success'],
+        ['wallet', 'Wallet'],
+        ['sell', 'New listing'],
+        ['you', 'Profile'],
+        ['search', 'Search'],
+        ['chats', 'Chats'],
+      ];
+
+      React.useEffect(() => {
+        const wrap = document.getElementById('chips');
+        wrap.innerHTML = '';
+        for (const [id, lbl] of screens) {
+          const b = document.createElement('button');
+          b.className = 'screen-chip' + (screen === id ? ' active' : '');
+          b.textContent = lbl;
+          b.onclick = () => goto(id, id === 'listing' || id === 'confirm' || id === 'success' ? { id: 'l1' } : {});
+          wrap.appendChild(b);
+        }
+      }, [screen]);
+
+      return view;
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('device-mount'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

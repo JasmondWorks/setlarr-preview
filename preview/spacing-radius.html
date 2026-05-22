@@ -1,0 +1,19 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Border radius</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px; background: var(--bg-surface); display:flex; gap:14px; align-items:center; justify-content:space-between; }
+  .item { display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .box { width:64px; height:64px; background:var(--brand-100); border:1px solid var(--brand-200); }
+  .pill { width:96px; height:32px; background:var(--brand-100); border:1px solid var(--brand-200); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; color:var(--brand-900); }
+  .name { font-size:10px; font-weight:600; letter-spacing:0.04em; color:var(--neutral-700); text-transform:uppercase; }
+  .val  { font-size:10px; color:var(--neutral-500); font-variant-numeric:tabular-nums; }
+</style></head>
+<body>
+  <div class="item"><div class="box" style="border-radius:4px"></div><div class="name">XS</div><div class="val">4px</div></div>
+  <div class="item"><div class="box" style="border-radius:6px"></div><div class="name">SM</div><div class="val">6px</div></div>
+  <div class="item"><div class="box" style="border-radius:10px"></div><div class="name">MD</div><div class="val">10px</div></div>
+  <div class="item"><div class="box" style="border-radius:16px"></div><div class="name">LG</div><div class="val">16px</div></div>
+  <div class="item"><div class="box" style="border-radius:20px"></div><div class="name">XL</div><div class="val">20px</div></div>
+  <div class="item"><div class="pill" style="border-radius:9999px">Verified</div><div class="name">Pill</div><div class="val">badges only</div></div>
+</body></html>

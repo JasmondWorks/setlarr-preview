@@ -1,0 +1,29 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Same-hue text rule</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:20px 24px; background: var(--bg-surface); display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+  .demo { padding:14px 16px; border-radius:10px; }
+  .demo .h { font-size:13px; font-weight:600; margin-bottom:4px; }
+  .demo .b { font-size:12px; line-height:1.4; }
+  .rule { grid-column:1/-1; font-size:11px; color:var(--neutral-500); font-style:italic; text-align:center; padding-top:2px; }
+</style></head>
+<body>
+  <div class="demo" style="background:var(--brand-50)">
+    <div class="h" style="color:var(--brand-900)">Locked in escrow</div>
+    <div class="b" style="color:var(--brand-900)">Funds release after buyer confirms.</div>
+  </div>
+  <div class="demo" style="background:var(--success-50)">
+    <div class="h" style="color:var(--success-900)">Verified seller</div>
+    <div class="b" style="color:var(--success-900)">ID matched. 142 completed sales.</div>
+  </div>
+  <div class="demo" style="background:var(--warning-50)">
+    <div class="h" style="color:var(--warning-900)">Awaiting shipment</div>
+    <div class="b" style="color:var(--warning-900)">Seller has 36 hours to ship.</div>
+  </div>
+  <div class="demo" style="background:var(--danger-50)">
+    <div class="h" style="color:var(--danger-900)">Order disputed</div>
+    <div class="b" style="color:var(--danger-900)">A Setlarr agent will reach out.</div>
+  </div>
+  <div class="rule">Text on a coloured tint always uses the same hue's 900 stop — never neutral.</div>
+</body></html>

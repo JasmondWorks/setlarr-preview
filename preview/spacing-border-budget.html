@@ -1,0 +1,34 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Border budget</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:18px 24px; background: var(--bg-surface); display:grid; grid-template-columns:1fr 1fr; gap:12px 16px; }
+  .col { display:flex; flex-direction:column; gap:4px; }
+  .lbl { font-size:10px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:var(--neutral-500); margin-bottom:4px;}
+  .yes { color: var(--success-600); }
+  .no  { color: var(--danger-600); }
+  .item { font-size:11px; line-height:1.55; color:var(--neutral-700); padding-left:12px; position:relative; }
+  .item::before { content:""; position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:9999px; }
+  .yes .item::before { background:var(--success-500); }
+  .no .item::before { background:var(--danger-500); }
+</style></head>
+<body>
+  <div class="col yes">
+    <div class="lbl" style="color:var(--success-600)">Borders earn their place</div>
+    <div class="item">Inputs · 1px neutral-300</div>
+    <div class="item">List-row dividers · 1px neutral-200</div>
+    <div class="item">Focus ring · 2px brand-500</div>
+    <div class="item">Alert left accent · 3px semantic-600</div>
+    <div class="item">Bottom-nav top edge · 1px neutral-200</div>
+    <div class="item">Danger ghost button · 1px danger-200</div>
+  </div>
+  <div class="col no">
+    <div class="lbl" style="color:var(--danger-600)">Borders never appear</div>
+    <div class="item">Around cards (shadow handles it)</div>
+    <div class="item">Around list groups</div>
+    <div class="item">Around category icon tiles</div>
+    <div class="item">Around chip / pill filters</div>
+    <div class="item">Around stat blocks</div>
+    <div class="item">Shadow + border together</div>
+  </div>
+</body></html>
