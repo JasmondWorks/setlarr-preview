@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Empty states · Setlarr</title>
+<meta name="viewport" content="width=1280" />
+<link rel="stylesheet" href="../colors_and_type.css" />
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  html, body { margin: 0; min-height: 100%; }
+  body { background: var(--neutral-50); color: var(--neutral-900); min-width: 1280px; padding: 40px; box-sizing: border-box; font-family: var(--font-sans); }
+  [data-lucide] { display: inline-block; }
+  button { font-family: inherit; cursor: pointer; }
+  h1 { margin: 0; font-size: 22px; font-weight: 600; color: var(--neutral-900); letter-spacing: -0.3px; }
+  .sub { margin: 6px 0 0 0; font-size: 14px; color: var(--neutral-500); }
+  .grid { margin-top: 24px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .panel {
+    background: #fff; border-radius: 10px;
+    padding: 32px;
+    box-shadow: var(--elevation-1);
+    min-height: 280px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+  }
+  .empty-icon-circle {
+    width: 72px; height: 72px;
+    border-radius: 9999px;
+    background: var(--neutral-100);
+    color: var(--neutral-300);
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+  }
+  .empty-h {
+    margin: 0;
+    font-size: 16px; font-weight: 600;
+    color: var(--neutral-900);
+  }
+  .empty-body {
+    margin: 8px 0 0;
+    font-size: 13px; color: var(--neutral-500);
+    line-height: 1.6; max-width: 240px;
+  }
+  .empty-cta {
+    margin-top: 20px;
+    height: 40px;
+    padding: 0 20px;
+    background: var(--brand-600); color: #fff;
+    border: 0; border-radius: 6px;
+    font-size: 13px; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 6px;
+    box-shadow: 0 4px 12px hsla(248, 60%, 47%, 0.22), 0 1px 2px rgba(30,20,60,0.06);
+  }
+  .empty-cta:hover { background: var(--brand-700); }
+  .empty-cta.secondary {
+    background: var(--neutral-100);
+    color: var(--neutral-900);
+    border: 1px solid var(--neutral-300);
+    box-shadow: var(--elevation-1);
+  }
+  .empty-cta.secondary:hover { background: var(--neutral-200); }
+</style>
+</head>
+<body data-screen-label="Empty states">
+
+<h1>Empty states — reference</h1>
+<p class="sub">Displayed when a section has no content yet.</p>
+
+<div class="grid">
+
+  <div class="panel">
+    <span class="empty-icon-circle"><i data-lucide="shopping-bag" style="width:48px;height:48px;"></i></span>
+    <h2 class="empty-h">No orders yet</h2>
+    <p class="empty-body">When you buy something it will appear here.</p>
+    <button class="empty-cta">Start exploring <i data-lucide="arrow-right" style="width:13px;height:13px;"></i></button>
+  </div>
+
+  <div class="panel">
+    <span class="empty-icon-circle"><i data-lucide="package" style="width:48px;height:48px;"></i></span>
+    <h2 class="empty-h">No listings yet</h2>
+    <p class="empty-body">List your first item and start earning.</p>
+    <button class="empty-cta"><i data-lucide="plus" style="width:13px;height:13px;"></i> List an item</button>
+  </div>
+
+  <div class="panel">
+    <span class="empty-icon-circle"><i data-lucide="heart" style="width:48px;height:48px;"></i></span>
+    <h2 class="empty-h">Nothing saved</h2>
+    <p class="empty-body">Tap the heart on any listing to save it here.</p>
+    <button class="empty-cta">Browse listings <i data-lucide="arrow-right" style="width:13px;height:13px;"></i></button>
+  </div>
+
+  <div class="panel">
+    <span class="empty-icon-circle"><i data-lucide="message-circle" style="width:48px;height:48px;"></i></span>
+    <h2 class="empty-h">No conversations</h2>
+    <p class="empty-body">Start a conversation by messaging a seller.</p>
+    <button class="empty-cta">Find a listing <i data-lucide="arrow-right" style="width:13px;height:13px;"></i></button>
+  </div>
+
+  <div class="panel">
+    <span class="empty-icon-circle"><i data-lucide="search" style="width:48px;height:48px;"></i></span>
+    <h2 class="empty-h">No results for "samsung s23"</h2>
+    <p class="empty-body">Try different keywords or remove some filters.</p>
+    <button class="empty-cta secondary"><i data-lucide="filter-x" style="width:13px;height:13px;"></i> Clear filters</button>
+  </div>
+
+  <div class="panel">
+    <span class="empty-icon-circle"><i data-lucide="bell" style="width:48px;height:48px;"></i></span>
+    <h2 class="empty-h">You're all caught up</h2>
+    <p class="empty-body">We'll notify you when something needs your attention.</p>
+  </div>
+
+</div>
+
+<script>
+  if (window.lucide && typeof lucide.createIcons === 'function') {
+    lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Explore · Setlarr</title>
+<meta name="viewport" content="width=1280" />
+<link rel="stylesheet" href="../colors_and_type.css" />
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    background: var(--neutral-50);
+    color: var(--neutral-900);
+    min-width: 1280px;
+    min-height: 100vh;
+  }
+  button, input { font-family: inherit; }
+  button { cursor: pointer; }
+  a { text-decoration: none; color: inherit; }
+  [data-lucide] { display: inline-block; vertical-align: middle; }
+
+  /* ============================================================
+     TOPBAR
+     ============================================================ */
+  .topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 64px;
+    background: #fff;
+    border-bottom: 1px solid var(--neutral-200);
+    z-index: 50;
+  }
+  .topbar-inner {
+    height: 100%;
+    padding: 0 24px 0 32px;
+    display: grid;
+    grid-template-columns: 240px 1fr 1fr;
+    align-items: center;
+    gap: 24px;
+  }
+  .logo { display: inline-flex; align-items: center; gap: 10px; }
+  .logo-mark {
+    width: 28px; height: 28px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 3px; flex-shrink: 0;
+  }
+  .logo-mark > span { background: var(--brand-600); border-radius: 3px; }
+  .logo-mark > span:nth-child(2) { background: var(--brand-500); }
+  .logo-mark > span:nth-child(3) { background: var(--brand-500); }
+  .logo-mark > span:nth-child(4) { background: var(--brand-700); }
+  .logo-word {
+    font-size: 18px; font-weight: 600;
+    color: var(--neutral-900); letter-spacing: -0.2px;
+  }
+  .mode-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 26px;
+    padding: 0 10px 0 6px;
+    margin-left: 4px;
+    border-radius: 9999px;
+    background: var(--brand-50);
+    color: var(--brand-700);
+    font-size: 11px; font-weight: 600;
+  }
+  .mode-pill .mode-pill-ico {
+    width: 16px; height: 16px;
+    border-radius: 9999px;
+    background: #fff;
+    color: var(--brand-600);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+
+  .search-wrap {
+    justify-self: center;
+    width: 480px;
+    height: 42px;
+    background: var(--neutral-100);
+    border: 1px solid var(--neutral-300);
+    border-radius: 8px;
+    display: flex; align-items: center;
+    padding: 0 14px;
+    gap: 10px;
+    transition: border-color var(--dur-micro) var(--ease-out),
+                box-shadow var(--dur-micro) var(--ease-out),
+                background var(--dur-micro) var(--ease-out);
+  }
+  .search-wrap:focus-within {
+    background: #fff;
+    border-color: var(--brand-500);
+    box-shadow: 0 0 0 3px var(--brand-50);
+  }
+  .search-wrap input {
+    flex: 1; min-width: 0; height: 100%;
+    border: 0; outline: 0; background: transparent;
+    font-size: 14px; color: var(--neutral-900);
+  }
+  .search-wrap input::placeholder { color: var(--neutral-400); }
+  .search-wrap kbd {
+    font-family: inherit;
+    font-size: 11px; font-weight: 600;
+    color: var(--neutral-500);
+    background: #fff;
+    border: 1px solid var(--neutral-200);
+    border-radius: 4px;
+    padding: 2px 6px;
+    line-height: 1;
+  }
+
+  .topbar-cta { justify-self: end; display: inline-flex; align-items: center; gap: 12px; }
+  .icon-btn {
+    width: 38px; height: 38px;
+    border-radius: 8px;
+    background: transparent;
+    border: 0;
+    color: var(--neutral-600);
+    display: inline-flex; align-items: center; justify-content: center;
+    position: relative;
+    transition: background var(--dur-micro) var(--ease-out);
+  }
+  .icon-btn:hover { background: var(--neutral-100); color: var(--neutral-900); }
+  .icon-btn .badge {
+    position: absolute; top: 6px; right: 6px;
+    width: 8px; height: 8px;
+    border-radius: 9999px;
+    background: var(--danger-500);
+    box-shadow: 0 0 0 2px #fff;
+  }
+  .avatar {
+    width: 36px; height: 36px;
+    border-radius: 9999px;
+    background: var(--brand-50);
+    color: var(--brand-900);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  /* ============================================================
+     SIDEBAR
+     ============================================================ */
+  .sidebar {
+    position: fixed;
+    top: 64px; left: 0; bottom: 0;
+    width: 240px;
+    background: #fff;
+    border-right: 1px solid var(--neutral-200);
+    z-index: 40;
+    display: flex; flex-direction: column;
+    box-sizing: border-box;
+  }
+  .mode-toggle {
+    margin: 16px 12px 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    padding: 4px;
+    background: var(--neutral-100);
+    border-radius: 10px;
+  }
+  .mode-toggle button {
+    height: 36px;
+    border: 0;
+    background: transparent;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--neutral-500);
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 6px;
+    transition: background var(--dur-micro) var(--ease-out),
+                color var(--dur-micro) var(--ease-out),
+                box-shadow var(--dur-micro) var(--ease-out);
+  }
+  .mode-toggle button[aria-selected="true"] {
+    background: #fff;
+    color: var(--neutral-900);
+    box-shadow: var(--elevation-1);
+  }
+  .mode-toggle button[aria-selected="true"][data-mode="buyer"] .mode-ico { color: var(--brand-600); }
+  .mode-toggle button[aria-selected="true"][data-mode="seller"] .mode-ico { color: var(--warning-600); }
+
+  .sidebar-nav {
+    flex: 1;
+    padding: 16px 12px 12px;
+    overflow-y: auto;
+  }
+  .nav-section + .nav-section { margin-top: 24px; }
+  .nav-label {
+    font-size: 11px; font-weight: 600;
+    color: var(--neutral-400);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0 12px;
+    margin-bottom: 8px;
+  }
+  .nav-item {
+    height: 40px;
+    padding: 0 16px;
+    border-radius: 6px;
+    display: flex; align-items: center; gap: 10px;
+    color: var(--neutral-700);
+    font-size: 14px;
+    font-weight: 400;
+    position: relative;
+    transition: background var(--dur-micro) var(--ease-out),
+                color var(--dur-micro) var(--ease-out);
+    margin-bottom: 2px;
+  }
+  .nav-item .nav-ico {
+    color: var(--neutral-500);
+    display: inline-flex; align-items: center;
+  }
+  .nav-item:hover { background: var(--neutral-100); color: var(--neutral-900); }
+  .nav-item:hover .nav-ico { color: var(--neutral-700); }
+  .nav-item.is-active {
+    background: var(--neutral-100);
+    color: var(--neutral-900);
+    font-weight: 600;
+  }
+  .nav-item.is-active::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 8px; bottom: 8px;
+    width: 3px;
+    border-radius: 0 9999px 9999px 0;
+    background: var(--brand-600);
+  }
+  .nav-item.is-active .nav-ico { color: var(--brand-600); }
+  .nav-item .count-pill {
+    margin-left: auto;
+    background: var(--neutral-100);
+    color: var(--neutral-600);
+    font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 9999px;
+    font-variant-numeric: tabular-nums;
+  }
+  .nav-item.is-active .count-pill {
+    background: var(--brand-100);
+    color: var(--brand-700);
+  }
+
+  .sidebar-user {
+    margin: 0 12px 16px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--neutral-50);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sidebar-user .name { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
+  .sidebar-user .name .n {
+    font-size: 13px; font-weight: 600; color: var(--neutral-900);
+    line-height: 1.2;
+  }
+  .sidebar-user .name .e {
+    font-size: 11px; color: var(--neutral-500);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .sidebar-user .avatar { width: 32px; height: 32px; font-size: 12px; }
+  .sidebar-user .log {
+    color: var(--neutral-400);
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background: transparent; border: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: background var(--dur-micro) var(--ease-out),
+                color var(--dur-micro) var(--ease-out);
+  }
+  .sidebar-user .log:hover { background: #fff; color: var(--neutral-700); }
+
+  /* ============================================================
+     MAIN
+     ============================================================ */
+  main {
+    padding: 64px 0 0 240px;
+    min-height: 100vh;
+    box-sizing: border-box;
+  }
+  .content {
+    padding: 32px 40px 64px;
+    position: relative;
+    isolation: isolate;
+    min-height: calc(100vh - 64px);
+    box-sizing: border-box;
+  }
+  .content::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 400px; height: 400px;
+    background-image:
+      radial-gradient(circle, hsl(248, 30%, 84%) 1px, transparent 1.2px);
+    background-size: 22px 22px;
+    mask-image: radial-gradient(circle at top right, #000 0%, transparent 75%);
+    -webkit-mask-image: radial-gradient(circle at top right, #000 0%, transparent 75%);
+    z-index: 0;
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  .page-head {
+    position: relative; z-index: 1;
+  }
+  .page-head h1 {
+    margin: 0;
+    font-size: 22px; font-weight: 600;
+    letter-spacing: -0.3px;
+    color: var(--neutral-900);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .page-head .city-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    background: var(--brand-50);
+    color: var(--brand-700);
+    font-size: 12px; font-weight: 600;
+  }
+  .page-head .sub {
+    margin: 4px 0 0 0;
+    font-size: 14px;
+    color: var(--neutral-500);
+  }
+
+  /* ---------- filter bar ---------- */
+  .filter-bar {
+    margin-top: 16px;
+    background: #fff;
+    box-shadow: var(--elevation-1);
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative; z-index: 1;
+  }
+  .chip {
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 9999px;
+    background: var(--neutral-100);
+    color: var(--neutral-700);
+    border: 0;
+    font-size: 12px; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: background var(--dur-micro) var(--ease-out),
+                color var(--dur-micro) var(--ease-out);
+  }
+  .chip:hover { background: var(--neutral-200); }
+  .chip.is-active {
+    background: var(--brand-600);
+    color: #fff;
+  }
+  .filter-sort {
+    margin-left: auto;
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--neutral-700);
+    font-size: 13px;
+    background: transparent;
+    border: 0;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+  .filter-sort:hover { background: var(--neutral-100); }
+  .filter-sort .ico { color: var(--neutral-400); }
+
+  /* ---------- content grid ---------- */
+  .grid-area {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 20px;
+    align-items: flex-start;
+    position: relative; z-index: 1;
+  }
+
+  /* ---------- filter sidebar ---------- */
+  .filter-side {
+    background: #fff;
+    box-shadow: var(--elevation-1);
+    border-radius: 12px;
+    padding: 20px;
+    position: sticky;
+    top: 80px;
+  }
+  .fs-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .fs-head h3 {
+    margin: 0;
+    font-size: 15px; font-weight: 600;
+    color: var(--neutral-900);
+  }
+  .fs-head .clear {
+    background: transparent; border: 0;
+    font-size: 13px; font-weight: 400;
+    color: var(--brand-600);
+  }
+  .fs-head .clear:hover { color: var(--brand-700); }
+
+  .fs-group + .fs-group { margin-top: 24px; }
+  .fs-label {
+    font-size: 11px; font-weight: 600;
+    color: var(--neutral-500);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .price-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .price-input {
+    height: 40px;
+    border: 1px solid var(--neutral-300);
+    border-radius: 6px;
+    background: #fff;
+    padding: 0 12px;
+    display: flex; align-items: center;
+    gap: 6px;
+    transition: border-color var(--dur-micro) var(--ease-out),
+                box-shadow var(--dur-micro) var(--ease-out);
+  }
+  .price-input:focus-within {
+    border-color: var(--brand-500);
+    box-shadow: 0 0 0 3px var(--brand-50);
+  }
+  .price-input .prefix {
+    color: var(--neutral-400);
+    font-size: 13px;
+  }
+  .price-input input {
+    flex: 1; min-width: 0;
+    border: 0; outline: 0; background: transparent;
+    font-size: 13px; font-weight: 400;
+    color: var(--neutral-900);
+    font-variant-numeric: tabular-nums;
+  }
+  .price-input input::placeholder { color: var(--neutral-400); }
+
+  .check-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 0;
+    cursor: pointer;
+  }
+  .check-row input { display: none; }
+  .check-box {
+    width: 18px; height: 18px;
+    border-radius: 4px;
+    border: 1.5px solid var(--neutral-300);
+    background: #fff;
+    flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: transparent;
+    transition: all var(--dur-micro) var(--ease-out);
+  }
+  .check-row input:checked + .check-box {
+    background: var(--brand-600);
+    border-color: var(--brand-600);
+    color: #fff;
+  }
+  .check-row span:last-child {
+    font-size: 13px;
+    color: var(--neutral-700);
+  }
+
+  .city-chip-row {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .city-chip {
+    padding: 6px 12px;
+    border-radius: 9999px;
+    background: var(--neutral-100);
+    color: var(--neutral-700);
+    font-size: 12px; font-weight: 600;
+    border: 0;
+  }
+  .city-chip.is-active {
+    background: var(--neutral-900);
+    color: #fff;
+  }
+
+  .radio-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 0;
+    cursor: pointer;
+  }
+  .radio-row input { display: none; }
+  .radio-pip {
+    width: 18px; height: 18px;
+    border-radius: 9999px;
+    border: 1.5px solid var(--neutral-300);
+    background: #fff;
+    flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: all var(--dur-micro) var(--ease-out);
+  }
+  .radio-pip::after {
+    content: '';
+    width: 8px; height: 8px;
+    border-radius: 9999px;
+    background: transparent;
+    transition: background var(--dur-micro) var(--ease-out);
+  }
+  .radio-row input:checked + .radio-pip {
+    border-color: var(--brand-600);
+  }
+  .radio-row input:checked + .radio-pip::after {
+    background: var(--brand-600);
+  }
+  .radio-row .label {
+    font-size: 13px;
+    color: var(--neutral-700);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .radio-row .label .star { color: var(--warning-500); }
+
+  /* ---------- listings grid ---------- */
+  .listings {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .listing {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: var(--elevation-2);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    cursor: pointer;
+    transition: box-shadow var(--dur-micro) var(--ease-out),
+                transform var(--dur-micro) var(--ease-out);
+  }
+  .listing:hover {
+    box-shadow: var(--elevation-3);
+    transform: translateY(-2px);
+  }
+  .listing-img {
+    height: 180px;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--neutral-400);
+    overflow: hidden;
+  }
+  .listing-img.cool   { background: linear-gradient(135deg, hsl(248, 50%, 92%), hsl(248, 40%, 80%)); color: hsl(248, 40%, 40%); }
+  .listing-img.warm   { background: linear-gradient(135deg, hsl(38, 70%, 92%), hsl(38, 55%, 82%));  color: hsl(38, 50%, 38%);  }
+  .listing-img.mint   { background: linear-gradient(135deg, hsl(152, 50%, 92%), hsl(152, 40%, 80%)); color: hsl(152, 50%, 35%); }
+  .listing-img.rose   { background: linear-gradient(135deg, hsl(338, 60%, 94%), hsl(338, 50%, 84%)); color: hsl(338, 55%, 40%); }
+  .listing-img.violet { background: linear-gradient(135deg, hsl(280, 50%, 93%), hsl(280, 40%, 82%)); color: hsl(280, 50%, 38%); }
+  .listing-img.azure  { background: linear-gradient(135deg, hsl(200, 60%, 93%), hsl(200, 50%, 82%)); color: hsl(200, 50%, 35%); }
+  .listing-img.amber  { background: linear-gradient(135deg, hsl(20, 65%, 93%), hsl(20, 55%, 82%));  color: hsl(20, 60%, 38%);   }
+  .listing-img.slate  { background: linear-gradient(135deg, hsl(240, 16%, 95%), hsl(240, 12%, 85%)); color: hsl(240, 12%, 45%); }
+  .listing-img::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.6) 1px, transparent 1.2px);
+    background-size: 14px 14px;
+    opacity: 0.6;
+  }
+  .listing-img i, .listing-img svg { position: relative; z-index: 1; }
+  .listing-badge {
+    position: absolute; top: 10px; left: 10px;
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 8px;
+    border-radius: 9999px;
+    background: rgba(255,255,255,0.95);
+    color: var(--success-900);
+    font-size: 10px; font-weight: 600;
+    z-index: 2;
+    box-shadow: var(--elevation-1);
+  }
+  .listing-badge .b-dot {
+    width: 5px; height: 5px; border-radius: 9999px;
+    background: var(--success-500);
+  }
+  .listing-heart {
+    position: absolute; top: 10px; right: 10px;
+    width: 28px; height: 28px;
+    border-radius: 9999px;
+    background: rgba(255,255,255,0.95);
+    color: var(--neutral-500);
+    display: inline-flex; align-items: center; justify-content: center;
+    z-index: 2;
+    box-shadow: var(--elevation-1);
+    border: 0;
+    transition: color var(--dur-micro) var(--ease-out);
+  }
+  .listing-heart:hover { color: var(--danger-500); }
+  .listing-heart.is-liked { color: var(--danger-500); }
+  .listing-body {
+    padding: 14px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .listing-title {
+    font-size: 14px; font-weight: 400;
+    color: var(--neutral-900);
+    line-height: 1.4;
+    overflow: hidden; display: -webkit-box;
+    -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    min-height: 38px;
+  }
+  .listing-price-row {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-top: 2px;
+  }
+  .listing-price {
+    font-size: 16px; font-weight: 600;
+    color: var(--neutral-900);
+    font-variant-numeric: tabular-nums;
+  }
+  .listing-old {
+    font-size: 12px; color: var(--neutral-400);
+    text-decoration: line-through;
+    font-variant-numeric: tabular-nums;
+  }
+  .listing-meta {
+    margin-top: 4px;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px;
+    color: var(--neutral-500);
+  }
+  .listing-meta .city {
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .listing-meta .dot { width: 3px; height: 3px; border-radius: 9999px; background: var(--neutral-300); }
+  .listing-meta .seller {
+    display: inline-flex; align-items: center; gap: 4px;
+    color: var(--success-600); font-weight: 600;
+  }
+
+  /* ---------- load more ---------- */
+  .load-more-row {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+  }
+  .load-more {
+    width: 200px;
+    height: 44px;
+    background: var(--neutral-100);
+    border: 1px solid var(--neutral-300);
+    color: var(--neutral-900);
+    font-size: 14px; font-weight: 600;
+    border-radius: 6px;
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 8px;
+    transition: background var(--dur-micro) var(--ease-out);
+  }
+  .load-more:hover { background: var(--neutral-200); }
+</style>
+</head>
+<body data-screen-label="Explore">
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="Landing Page.html" class="logo" aria-label="Setlarr home">
+      <span class="logo-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+      <span class="logo-word">Setlarr</span>
+      <span class="mode-pill">
+        <span class="mode-pill-ico"><i data-lucide="shopping-bag" style="width:11px;height:11px;"></i></span>
+        Buying
+      </span>
+    </a>
+    <label class="search-wrap" aria-label="Search listings">
+      <i data-lucide="search" style="width:16px;height:16px;color:var(--neutral-400);"></i>
+      <input type="search" placeholder="Search listings, sellers, categories..." />
+      <kbd>⌘K</kbd>
+    </label>
+    <div class="topbar-cta">
+      <a class="icon-btn" href="Notifications Page.html" aria-label="Notifications"><i data-lucide="bell" style="width:20px;height:20px;"></i><span class="badge" aria-hidden="true"></span></a>
+      <span class="avatar" aria-label="Ada Okonkwo">AO</span>
+    </div>
+  </div>
+</header>
+
+<aside class="sidebar" aria-label="Primary navigation">
+  <div class="mode-toggle" role="tablist" aria-label="Switch role">
+    <button type="button" data-mode="buyer" role="tab" aria-selected="true">
+      <span class="mode-ico" aria-hidden="true"><i data-lucide="shopping-bag" style="width:14px;height:14px;"></i></span>
+      Buying
+    </button>
+    <button type="button" data-mode="seller" role="tab" aria-selected="false">
+      <span class="mode-ico" aria-hidden="true"><i data-lucide="tag" style="width:14px;height:14px;"></i></span>
+      Selling
+    </button>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-label">Main</div>
+      <a href="Dashboard Page.html" class="nav-item">
+        <span class="nav-ico"><i data-lucide="home" style="width:18px;height:18px;"></i></span>
+        Home
+      </a>
+      <a href="Explore Page.html" class="nav-item is-active">
+        <span class="nav-ico"><i data-lucide="search" style="width:18px;height:18px;"></i></span>
+        Explore
+      </a>
+      <a href="Orders Page.html" class="nav-item">
+        <span class="nav-ico"><i data-lucide="shopping-bag" style="width:18px;height:18px;"></i></span>
+        Orders
+        <span class="count-pill">3</span>
+      </a>
+      <a href="Saved Page.html" class="nav-item">
+        <span class="nav-ico"><i data-lucide="heart" style="width:18px;height:18px;"></i></span>
+        Saved
+        <span class="count-pill">12</span>
+      </a>
+      <a href="Wallet Page.html" class="nav-item">
+        <span class="nav-ico"><i data-lucide="wallet" style="width:18px;height:18px;"></i></span>
+        Wallet
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Account</div>
+      <a href="Profile Page.html" class="nav-item">
+        <span class="nav-ico"><i data-lucide="user" style="width:18px;height:18px;"></i></span>
+        Profile
+      </a>
+      <a href="Profile Page.html" class="nav-item">
+        <span class="nav-ico"><i data-lucide="settings" style="width:18px;height:18px;"></i></span>
+        Settings
+      </a>
+      <a href="Help Page.html" class="nav-item">
+        <span class="nav-ico"><i data-lucide="help-circle" style="width:18px;height:18px;"></i></span>
+        Help
+      </a>
+    </div>
+  </nav>
+  <div class="sidebar-user">
+    <span class="avatar">AO</span>
+    <div class="name">
+      <span class="n">Ada Okonkwo</span>
+      <span class="e">ada.okonkwo@gmail.com</span>
+    </div>
+    <button class="log" aria-label="Sign out">
+      <i data-lucide="log-out" style="width:16px;height:16px;"></i>
+    </button>
+  </div>
+</aside>
+
+<main>
+  <div class="content">
+
+    <div class="page-head">
+      <h1>
+        Explore listings
+        <span class="city-pill"><i data-lucide="map-pin" style="width:11px;height:11px;"></i>Lagos</span>
+      </h1>
+      <p class="sub">Verified items near you in Lagos.</p>
+    </div>
+
+    <!-- filter bar -->
+    <div class="filter-bar" role="toolbar" aria-label="Category filters">
+      <button class="chip is-active" type="button">All</button>
+      <button class="chip" type="button">
+        <i data-lucide="smartphone" style="width:13px;height:13px;"></i>
+        Phones
+      </button>
+      <button class="chip" type="button">
+        <i data-lucide="laptop" style="width:13px;height:13px;"></i>
+        Laptops
+      </button>
+      <button class="chip" type="button">
+        <i data-lucide="shirt" style="width:13px;height:13px;"></i>
+        Fashion
+      </button>
+      <button class="chip" type="button">
+        <i data-lucide="sofa" style="width:13px;height:13px;"></i>
+        Home
+      </button>
+      <button class="chip" type="button">
+        <i data-lucide="car" style="width:13px;height:13px;"></i>
+        Vehicles
+      </button>
+      <button class="filter-sort" type="button">
+        <span class="ico"><i data-lucide="sliders-horizontal" style="width:16px;height:16px;"></i></span>
+        Sort: Newest
+        <i data-lucide="chevron-down" style="width:14px;height:14px;color:var(--neutral-400);"></i>
+      </button>
+    </div>
+
+    <div class="grid-area">
+
+      <!-- listings -->
+      <div>
+        <div class="listings">
+
+          <a href="Listing Detail Page.html" class="listing">
+            <div class="listing-img cool">
+              <span class="listing-badge"><span class="b-dot"></span>Verified</span>
+              <button class="listing-heart" aria-label="Save listing" onclick="event.preventDefault();this.classList.toggle('is-liked');"><i data-lucide="heart" style="width:14px;height:14px;"></i></button>
+              <i data-lucide="smartphone" style="width:60px;height:60px;"></i>
+            </div>
+            <div class="listing-body">
+              <span class="listing-title">iPhone 14 Pro Max · 256GB Deep Purple</span>
+              <div class="listing-price-row">
+                <span class="listing-price">₦420,000</span>
+                <span class="listing-old">₦520,000</span>
+              </div>
+              <div class="listing-meta">
+                <span class="city"><i data-lucide="map-pin" style="width:11px;height:11px;"></i>Lekki</span>
+                <span class="dot"></span>
+                <span class="seller"><i data-lucide="badge-check" style="width:11px;height:11px;"></i>Verified</span>
+              </div>
+            </div>
+          </a>
+
+          <a href="Listing Detail Page.html" class="listing">
+            <div class="listing-img warm">
+              <span class="listing-badge"><span class="b-dot"></span>Verified</span>
+              <button class="listing-heart is-liked" aria-label="Save listing" onclick="event.preventDefault();this.classList.toggle('is-liked');"><i data-lucide="heart" style="width:14px;height:14px;fill:currentColor;"></i></button>
+              <i data-lucide="headphones" style="width:60px;height:60px;"></i>
+            </div>
+            <div class="listing-body">
+              <span class="listing-title">Sony WH-1000XM5 wireless noise-cancelling</span>
+              <div class="listing-price-row">
+                <span class="listing-price">₦185,000</span>
+              </div>
+              <div class="listing-meta">
+                <span class="city"><i data-lucide="map-pin" style="width:11px;height:11px;"></i>Ikeja</span>
+                <span class="dot"></span>
+                <span class="seller"><i data-lucide="badge-check" style="width:11px;height:11px;"></i>Verified</span>
+              </div>
+            </div>
+          </a>
+
+          <a href="Listing Detail Page.html" class="listing">
+            <div class="listing-img mint">
+              <span class="listing-badge"><span class="b-dot"></span>Verified</span>
+              <button class="listing-heart" aria-label="Save listing" onclick="event.preventDefault();this.classList.toggle('is-liked');"><i data-lucide="heart" style="width:14px;height:14px;"></i></button>
+              <i data-lucide="laptop" style="width:60px;height:60px;"></i>
+            </div>
+            <div class="listing-body">
+              <span class="listing-title">MacBook Pro 14" M3 Pro · 18GB / 512GB</span>
+              <div class="listing-price-row">
+                <span class="listing-price">₦1,420,000</span>
+              </div>
+              <div class="listing-meta">
+                <span class="city"><i data-lucide="map-pin" style="width:11px;height:11px;"></i>Lekki</span>
+                <span class="dot"></span>
+                <span class="seller"><i data-lucide="badge-check" style="width:11px;height:11px;"></i>Verified</span>
+              </div>
+            </div>
+          </a>
+
+          <a href="Listing Detail Page.html" class="listing">
+            <div class="listing-img rose">
+              <button class="listing-heart" aria-label="Save listing" onclick="event.preventDefault();this.classList.toggle('is-liked');"><i data-lucide="heart" style="width:14px;height:14px;"></i></button>
+              <i data-lucide="shirt" style="width:60px;height:60px;"></i>
+            </div>
+            <div class="listing-body">
+              <span class="listing-title">Vintage Levi's 501 Selvedge denim · size 32</span>
+              <div class="listing-price-row">
+                <span class="listing-price">₦42,000</span>
+                <span class="listing-old">₦65,000</span>
+              </div>
+              <div class="listing-meta">
+                <span class="city"><i data-lucide="map-pin" style="width:11px;height:11px;"></i>Yaba</span>
+                <span class="dot"></span>
+                <span class="seller" style="color: var(--neutral-500);"><i data-lucide="user" style="width:11px;height:11px;"></i>New seller</span>
+              </div>
+            </div>
+          </a>
+
+          <a href="Listing Detail Page.html" class="listing">
+            <div class="listing-img violet">
+              <span class="listing-badge"><span class="b-dot"></span>Verified</span>
+              <button class="listing-heart" aria-label="Save listing" onclick="event.preventDefault();this.classList.toggle('is-liked');"><i data-lucide="heart" style="width:14px;height:14px;"></i></button>
+              <i data-lucide="gamepad-2" style="width:60px;height:60px;"></i>
+            </div>
+            <div class="listing-body">
+              <span class="listing-title">PlayStation 5 Slim Disc · with 2 controllers</span>
+              <div class="listing-price-row">
+                <span class="listing-price">₦580,000</span>
+              </div>
+              <div class="listing-meta">
+                <span class="city"><i data-lucide="map-pin" style="width:11px;height:11px;"></i>Surulere</span>
+                <span class="dot"></span>
+                <span class="seller"><i data-lucide="badge-check" style="width:11px;height:11px;"></i>Verified</span>
+              </div>
+            </div>
+          </a>
+
+          <a href="Listing Detail Page.html" class="listing">
+            <div class="listing-img azure">
+              <span class="listing-badge"><span class="b-dot"></span>Verified</span>
+              <button class="listing-heart" aria-label="Save listing" onclick="event.preventDefault();this.classList.toggle('is-liked');"><i data-lucide="heart" style="width:14px;height:14px;"></i></button>
+              <i data-lucide="camera" style="width:60px;height:60px;"></i>
+            </div>
+            <div class="listing-body">
+              <span class="listing-title">Sony A7 IV body + 28-70mm kit lens</span>
+              <div class="listing-price-row">
+                <span class="listing-price">₦1,180,000</span>
+              </div>
+              <div class="listing-meta">
+                <span class="city"><i data-lucide="map-pin" style="width:11px;height:11px;"></i>VI</span>
+                <span class="dot"></span>
+                <span class="seller"><i data-lucide="badge-check" style="width:11px;height:11px;"></i>Verified</span>
+              </div>
+            </div>
+          </a>
+
+          <a href="Listing Detail Page.html" class="listing">
+            <div class="listing-img amber">
+              <button class="listing-heart" aria-label="Save listing" onclick="event.preventDefault();this.classList.toggle('is-liked');"><i data-lucide="heart" style="width:14px;height:14px;"></i></button>
+              <i data-lucide="sofa" style="width:60px;height:60px;"></i>
+            </div>
+            <div class="listing-body">
+              <span class="listing-title">Mid-century lounge chair, walnut frame</span>
+              <div class="listing-price-row">
+                <span class="listing-price">₦128,000</span>
+              </div>
+              <div class="listing-meta">
+                <span class="city"><i data-lucide="map-pin" style="width:11px;height:11px;"></i>Ikoyi</span>
+                <span class="dot"></span>
+                <span class="seller"><i data-lucide="badge-check" style="width:11px;height:11px;"></i>Verified</span>
+              </div>
+            </div>
+          </a>
+
+          <a href="Listing Detail Page.html" class="listing">
+            <div class="listing-img slate">
+              <span class="listing-badge"><span class="b-dot"></span>Verified</span>
+              <button class="listing-heart" aria-label="Save listing" onclick="event.preventDefault();this.classList.toggle('is-liked');"><i data-lucide="heart" style="width:14px;height:14px;"></i></button>
+              <i data-lucide="watch" style="width:60px;height:60px;"></i>
+            </div>
+            <div class="listing-body">
+              <span class="listing-title">Apple Watch Series 9 GPS · 45mm Midnight</span>
+              <div class="listing-price-row">
+                <span class="listing-price">₦310,000</span>
+                <span class="listing-old">₦360,000</span>
+              </div>
+              <div class="listing-meta">
+                <span class="city"><i data-lucide="map-pin" style="width:11px;height:11px;"></i>Lekki</span>
+                <span class="dot"></span>
+                <span class="seller"><i data-lucide="badge-check" style="width:11px;height:11px;"></i>Verified</span>
+              </div>
+            </div>
+          </a>
+
+          <a href="Listing Detail Page.html" class="listing">
+            <div class="listing-img cool">
+              <span class="listing-badge"><span class="b-dot"></span>Verified</span>
+              <button class="listing-heart" aria-label="Save listing" onclick="event.preventDefault();this.classList.toggle('is-liked');"><i data-lucide="heart" style="width:14px;height:14px;"></i></button>
+              <i data-lucide="smartphone" style="width:60px;height:60px;"></i>
+            </div>
+            <div class="listing-body">
+              <span class="listing-title">Samsung Galaxy S24 Ultra · 512GB Titanium</span>
+              <div class="listing-price-row">
+                <span class="listing-price">₦780,000</span>
+              </div>
+              <div class="listing-meta">
+                <span class="city"><i data-lucide="map-pin" style="width:11px;height:11px;"></i>Ikeja</span>
+                <span class="dot"></span>
+                <span class="seller"><i data-lucide="badge-check" style="width:11px;height:11px;"></i>Verified</span>
+              </div>
+            </div>
+          </a>
+
+          <a href="Listing Detail Page.html" class="listing">
+            <div class="listing-img warm">
+              <button class="listing-heart" aria-label="Save listing" onclick="event.preventDefault();this.classList.toggle('is-liked');"><i data-lucide="heart" style="width:14px;height:14px;"></i></button>
+              <i data-lucide="speaker" style="width:60px;height:60px;"></i>
+            </div>
+            <div class="listing-body">
+              <span class="listing-title">JBL Charge 5 portable Bluetooth speaker</span>
+              <div class="listing-price-row">
+                <span class="listing-price">₦62,000</span>
+              </div>
+              <div class="listing-meta">
+                <span class="city"><i data-lucide="map-pin" style="width:11px;height:11px;"></i>Surulere</span>
+                <span class="dot"></span>
+                <span class="seller" style="color: var(--neutral-500);"><i data-lucide="user" style="width:11px;height:11px;"></i>New seller</span>
+              </div>
+            </div>
+          </a>
+
+          <a href="Listing Detail Page.html" class="listing">
+            <div class="listing-img mint">
+              <span class="listing-badge"><span class="b-dot"></span>Verified</span>
+              <button class="listing-heart" aria-label="Save listing" onclick="event.preventDefault();this.classList.toggle('is-liked');"><i data-lucide="heart" style="width:14px;height:14px;"></i></button>
+              <i data-lucide="bike" style="width:60px;height:60px;"></i>
+            </div>
+            <div class="listing-body">
+              <span class="listing-title">Trek FX 3 disc commuter bike · medium frame</span>
+              <div class="listing-price-row">
+                <span class="listing-price">₦440,000</span>
+              </div>
+              <div class="listing-meta">
+                <span class="city"><i data-lucide="map-pin" style="width:11px;height:11px;"></i>Lekki</span>
+                <span class="dot"></span>
+                <span class="seller"><i data-lucide="badge-check" style="width:11px;height:11px;"></i>Verified</span>
+              </div>
+            </div>
+          </a>
+
+          <a href="Listing Detail Page.html" class="listing">
+            <div class="listing-img violet">
+              <span class="listing-badge"><span class="b-dot"></span>Verified</span>
+              <button class="listing-heart" aria-label="Save listing" onclick="event.preventDefault();this.classList.toggle('is-liked');"><i data-lucide="heart" style="width:14px;height:14px;"></i></button>
+              <i data-lucide="book-open" style="width:60px;height:60px;"></i>
+            </div>
+            <div class="listing-body">
+              <span class="listing-title">Kindle Oasis 32GB · graphite, with leather cover</span>
+              <div class="listing-price-row">
+                <span class="listing-price">₦88,000</span>
+              </div>
+              <div class="listing-meta">
+                <span class="city"><i data-lucide="map-pin" style="width:11px;height:11px;"></i>Ikoyi</span>
+                <span class="dot"></span>
+                <span class="seller"><i data-lucide="badge-check" style="width:11px;height:11px;"></i>Verified</span>
+              </div>
+            </div>
+          </a>
+
+        </div>
+
+        <div class="load-more-row">
+          <button class="load-more" type="button">
+            Load more listings
+            <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- filter side -->
+      <aside class="filter-side" aria-label="Filters">
+        <div class="fs-head">
+          <h3>Filters</h3>
+          <button class="clear" type="button">Clear all</button>
+        </div>
+
+        <div class="fs-group">
+          <span class="fs-label">Price range</span>
+          <div class="price-row">
+            <label class="price-input">
+              <span class="prefix">₦</span>
+              <input type="text" inputmode="numeric" placeholder="Min" />
+            </label>
+            <label class="price-input">
+              <span class="prefix">₦</span>
+              <input type="text" inputmode="numeric" placeholder="Max" />
+            </label>
+          </div>
+        </div>
+
+        <div class="fs-group">
+          <span class="fs-label">Condition</span>
+          <label class="check-row">
+            <input type="checkbox" checked />
+            <span class="check-box"><i data-lucide="check" style="width:12px;height:12px;"></i></span>
+            <span>Like new</span>
+          </label>
+          <label class="check-row">
+            <input type="checkbox" checked />
+            <span class="check-box"><i data-lucide="check" style="width:12px;height:12px;"></i></span>
+            <span>Good</span>
+          </label>
+          <label class="check-row">
+            <input type="checkbox" />
+            <span class="check-box"><i data-lucide="check" style="width:12px;height:12px;"></i></span>
+            <span>Fair</span>
+          </label>
+        </div>
+
+        <div class="fs-group">
+          <span class="fs-label">Location</span>
+          <div class="city-chip-row">
+            <button class="city-chip is-active" type="button">Lagos</button>
+            <button class="city-chip" type="button">Abuja</button>
+            <button class="city-chip" type="button">Ibadan</button>
+            <button class="city-chip" type="button">PH</button>
+          </div>
+        </div>
+
+        <div class="fs-group">
+          <span class="fs-label">Seller rating</span>
+          <label class="radio-row">
+            <input type="radio" name="rating" />
+            <span class="radio-pip"></span>
+            <span class="label"><span class="star">★</span> 4.0+</span>
+          </label>
+          <label class="radio-row">
+            <input type="radio" name="rating" checked />
+            <span class="radio-pip"></span>
+            <span class="label"><span class="star">★</span> 4.5+</span>
+          </label>
+          <label class="radio-row">
+            <input type="radio" name="rating" />
+            <span class="radio-pip"></span>
+            <span class="label"><span class="star">★</span> 4.9+</span>
+          </label>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</main>
+
+<script>
+  if (window.lucide && typeof lucide.createIcons === 'function') {
+    lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+  }
+  document.querySelectorAll('.filter-bar .chip').forEach(c => {
+    c.addEventListener('click', () => {
+      document.querySelectorAll('.filter-bar .chip').forEach(x => x.classList.remove('is-active'));
+      c.classList.add('is-active');
+    });
+  });
+  document.querySelectorAll('.city-chip-row .city-chip').forEach(c => {
+    c.addEventListener('click', () => {
+      document.querySelectorAll('.city-chip-row .city-chip').forEach(x => x.classList.remove('is-active'));
+      c.classList.add('is-active');
+    });
+  });
+  document.querySelectorAll('.mode-toggle button').forEach(b => {
+    b.addEventListener('click', () => {
+      if (b.dataset.mode === 'seller') window.location.href = 'Dashboard Page.html';
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Withdraw funds · Setlarr</title>
+<meta name="viewport" content="width=1280" />
+<link rel="stylesheet" href="../colors_and_type.css" />
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  html, body { margin: 0; min-height: 100%; }
+  body { background: var(--neutral-50); color: var(--neutral-900); min-width: 1280px; }
+  button, input { font-family: inherit; }
+  button { cursor: pointer; }
+  [data-lucide] { display: inline-block; vertical-align: middle; }
+
+  /* faux wallet bg under modal overlays */
+  .faux-bg {
+    position: fixed; inset: 0;
+    background: var(--neutral-50);
+    z-index: 0;
+  }
+  .faux-bg::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, hsl(248, 30%, 84%) 1px, transparent 1.2px);
+    background-size: 22px 22px;
+    opacity: 0.3;
+    mask-image: radial-gradient(circle at center, #000 0%, transparent 65%);
+    -webkit-mask-image: radial-gradient(circle at center, #000 0%, transparent 65%);
+  }
+
+  main {
+    position: relative; z-index: 1;
+    padding: 80px 32px;
+    min-height: 100vh; box-sizing: border-box;
+  }
+  .frame { max-width: 1640px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+
+  .state-col { display: flex; flex-direction: column; align-items: center; }
+  .state-tag {
+    margin-bottom: 16px;
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; font-weight: 600;
+    color: var(--brand-700);
+    letter-spacing: 0.06em; text-transform: uppercase;
+    background: #fff;
+    padding: 6px 12px 6px 8px;
+    border-radius: 9999px;
+    box-shadow: var(--elevation-1);
+  }
+  .state-tag .n {
+    width: 18px; height: 18px;
+    border-radius: 9999px;
+    background: var(--brand-100); color: var(--brand-700);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 10px;
+  }
+
+  .modal-shell {
+    position: relative;
+    width: 100%; max-width: 480px;
+    background: rgba(26, 26, 36, 0.5);
+    border-radius: 24px;
+    padding: 32px;
+    box-sizing: border-box;
+  }
+  .modal {
+    background: #fff;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 8px 24px rgba(30,20,60,0.10), 0 16px 48px rgba(30,20,60,0.08);
+    position: relative;
+  }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--neutral-200);
+    margin-bottom: 24px;
+  }
+  .modal-header h2 { margin: 0; font-size: 20px; font-weight: 600; color: var(--neutral-900); }
+  .close-btn { background: transparent; border: 0; color: var(--neutral-400); padding: 0; }
+  .close-btn:hover { color: var(--neutral-900); }
+
+  .sub-text { font-size: 14px; color: var(--neutral-500); line-height: 1.55; }
+
+  /* state 1 */
+  .balance-block {
+    margin-top: 20px;
+    background: var(--neutral-100);
+    border-radius: 10px;
+    padding: 16px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .balance-block .l { font-size: 14px; color: var(--neutral-600); }
+  .balance-block .l strong { color: var(--neutral-900); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .balance-block .all { background: transparent; border: 0; color: var(--brand-600); font-size: 13px; font-weight: 400; }
+
+  .amount-row {
+    margin-top: 20px;
+    display: flex; align-items: baseline; justify-content: center;
+    gap: 4px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--brand-500);
+  }
+  .amount-row .prefix { font-size: 20px; font-weight: 600; color: var(--neutral-700); }
+  .amount-row input {
+    background: transparent; border: 0; outline: 0;
+    font-size: 32px; font-weight: 600;
+    color: var(--neutral-900);
+    width: 220px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .label {
+    font-size: 11px; font-weight: 600;
+    color: var(--neutral-500);
+    letter-spacing: 0.06em; text-transform: uppercase;
+    margin-top: 24px;
+    margin-bottom: 8px;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .label::before { content: ''; width: 14px; height: 2px; background: var(--brand-600); border-radius: 9999px; }
+
+  .bank-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    background: #fff;
+    border: 1px solid var(--neutral-200);
+    cursor: pointer;
+    transition: background var(--dur-micro) var(--ease-out);
+  }
+  .bank-row + .bank-row { margin-top: 8px; }
+  .bank-row.is-selected {
+    background: var(--brand-50);
+    border-color: var(--brand-500);
+  }
+  .bank-ico {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    background: var(--neutral-100); color: var(--neutral-600);
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .bank-row.is-selected .bank-ico { background: #fff; color: var(--brand-600); }
+  .bank-info { flex: 1; }
+  .bank-name { font-size: 14px; font-weight: 600; color: var(--neutral-900); }
+  .bank-meta { font-size: 12px; color: var(--neutral-500); }
+  .bank-radio { width: 18px; height: 18px; border-radius: 9999px; border: 1.5px solid var(--neutral-300); display: inline-flex; align-items: center; justify-content: center; }
+  .bank-row.is-selected .bank-radio { border-color: var(--brand-600); background: var(--brand-600); }
+  .bank-radio::after { content: ''; width: 6px; height: 6px; border-radius: 9999px; background: transparent; }
+  .bank-row.is-selected .bank-radio::after { background: #fff; }
+
+  .fee-note { margin-top: 16px; text-align: center; font-size: 12px; color: var(--neutral-500); }
+
+  .btn-primary-full {
+    margin-top: 20px;
+    width: 100%; height: 48px;
+    background: var(--brand-600); color: #fff;
+    border: 0; border-radius: 8px;
+    font-size: 15px; font-weight: 600;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    box-shadow: 0 6px 18px hsla(248, 60%, 47%, 0.28), 0 1px 2px rgba(30,20,60,0.06);
+  }
+
+  /* state 2 — confirm */
+  .summary {
+    margin-top: 20px;
+    background: var(--neutral-100);
+    border-radius: 10px;
+    padding: 18px;
+  }
+  .sr { display: flex; justify-content: space-between; padding: 5px 0; font-size: 14px; font-variant-numeric: tabular-nums; color: var(--neutral-700); }
+  .sr .v { color: var(--neutral-900); font-weight: 600; }
+  .divider { height: 1px; background: var(--neutral-200); margin: 12px 0; }
+  .total-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 16px; font-weight: 600; color: var(--neutral-900); font-variant-numeric: tabular-nums; }
+  .total-row .lbl { font-size: 13px; color: var(--neutral-600); font-weight: 400; }
+
+  .edit-row { margin-top: 12px; text-align: center; }
+  .edit-row button { background: transparent; border: 0; color: var(--brand-600); font-size: 13px; font-weight: 400; }
+  .security-note { margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; color: var(--neutral-500); }
+
+  /* state 3 — success */
+  .success-icon {
+    width: 72px; height: 72px;
+    border-radius: 9999px;
+    background: var(--success-50);
+    color: var(--success-600);
+    display: flex; align-items: center; justify-content: center;
+    margin: 8px auto 24px;
+  }
+  .success-msg {
+    margin: 0;
+    font-size: 22px; font-weight: 600;
+    color: var(--neutral-900);
+    text-align: center;
+    letter-spacing: -0.3px;
+  }
+  .success-sub { margin: 12px auto 0; max-width: 360px; text-align: center; font-size: 14px; color: var(--neutral-500); line-height: 1.55; }
+
+  .ref {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--neutral-500);
+  }
+  .ref-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    background: var(--neutral-100);
+    color: var(--neutral-900);
+    font-size: 12px; font-weight: 600;
+    margin-left: 4px;
+  }
+  .ref-pill .copy { color: var(--brand-600); display: inline-flex; cursor: pointer; }
+
+  .done-btn {
+    margin: 24px auto 0;
+    display: block;
+    width: 200px; height: 44px;
+    background: var(--brand-600); color: #fff;
+    border: 0; border-radius: 8px;
+    font-size: 14px; font-weight: 600;
+    box-shadow: 0 6px 18px hsla(248, 60%, 47%, 0.28);
+  }
+</style>
+</head>
+<body data-screen-label="Withdraw">
+
+<div class="faux-bg" aria-hidden="true"></div>
+
+<main>
+  <div class="frame">
+
+    <!-- STATE 1 -->
+    <div class="state-col">
+      <span class="state-tag"><span class="n">1</span> Enter amount</span>
+      <div class="modal-shell">
+        <div class="modal">
+          <div class="modal-header">
+            <h2>Withdraw funds</h2>
+            <button class="close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+          </div>
+          <p class="sub-text">Funds sent to your bank account within 30 minutes.</p>
+
+          <div class="balance-block">
+            <span class="l">Available: <strong>₦812,400</strong></span>
+            <button class="all">Withdraw all</button>
+          </div>
+
+          <div class="amount-row">
+            <span class="prefix">₦</span>
+            <input type="text" value="200,000" />
+          </div>
+
+          <div class="label">To account</div>
+          <div class="bank-row is-selected">
+            <span class="bank-ico"><i data-lucide="building-2" style="width:18px;height:18px;"></i></span>
+            <div class="bank-info">
+              <div class="bank-name">GTBank •• 4521</div>
+              <div class="bank-meta">Adaeze Okonkwo · Primary</div>
+            </div>
+            <span class="bank-radio"></span>
+          </div>
+          <div class="bank-row">
+            <span class="bank-ico"><i data-lucide="building-2" style="width:18px;height:18px;"></i></span>
+            <div class="bank-info">
+              <div class="bank-name">Access Bank •• 7702</div>
+              <div class="bank-meta">Adaeze Okonkwo</div>
+            </div>
+            <span class="bank-radio"></span>
+          </div>
+
+          <p class="fee-note">Transfer fee: ₦50</p>
+
+          <button class="btn-primary-full">Continue <i data-lucide="arrow-right" style="width:16px;height:16px;"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATE 2 -->
+    <div class="state-col">
+      <span class="state-tag"><span class="n">2</span> Confirm details</span>
+      <div class="modal-shell">
+        <div class="modal">
+          <div class="modal-header">
+            <h2>Confirm withdrawal</h2>
+            <button class="close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+          </div>
+          <p class="sub-text">Review the details before sending.</p>
+
+          <div class="summary">
+            <div class="sr"><span>Amount</span><span class="v">₦200,000</span></div>
+            <div class="sr"><span>To</span><span class="v">GTBank •• 4521</span></div>
+            <div class="sr"><span>Transfer fee</span><span class="v">₦50</span></div>
+            <div class="divider"></div>
+            <div class="total-row"><span class="lbl">You'll receive</span><span>₦199,950</span></div>
+          </div>
+
+          <button class="btn-primary-full"><i data-lucide="lock" style="width:16px;height:16px;"></i> Confirm — ₦199,950</button>
+
+          <div class="edit-row"><button>Edit amount</button></div>
+
+          <div class="security-note">
+            <i data-lucide="shield" style="width:14px;height:14px;color:var(--neutral-400);"></i>
+            Protected by 128-bit encryption
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATE 3 -->
+    <div class="state-col">
+      <span class="state-tag"><span class="n">3</span> Success</span>
+      <div class="modal-shell">
+        <div class="modal">
+          <div class="modal-header">
+            <h2>Withdrawal sent</h2>
+            <button class="close-btn"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+          </div>
+
+          <div class="success-icon"><i data-lucide="check" style="width:32px;height:32px;"></i></div>
+
+          <h3 class="success-msg">₦199,950 is on its way</h3>
+          <p class="success-sub">Your GTBank account will be credited within 30 minutes.</p>
+
+          <p class="ref">REF: <span class="ref-pill">STL8472 <span class="copy"><i data-lucide="copy" style="width:12px;height:12px;"></i></span></span></p>
+
+          <button class="done-btn">Done</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  if (window.lucide && typeof lucide.createIcons === 'function') {
+    lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Messages · Setlarr</title>
+<meta name="viewport" content="width=1280" />
+<link rel="stylesheet" href="../colors_and_type.css" />
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  html, body { margin: 0; height: 100%; }
+  body { background: var(--neutral-50); color: var(--neutral-900); min-width: 1280px; height: 100vh; overflow: hidden; }
+  button, input { font-family: inherit; }
+  button { cursor: pointer; }
+  a { text-decoration: none; color: inherit; }
+  [data-lucide] { display: inline-block; vertical-align: middle; }
+
+  .topbar { position: fixed; top: 0; left: 0; right: 0; height: 64px; background: #fff; border-bottom: 1px solid var(--neutral-200); z-index: 50; }
+  .topbar-inner { height: 100%; padding: 0 24px 0 32px; display: grid; grid-template-columns: 240px 1fr 1fr; align-items: center; gap: 24px; }
+  .logo { display: inline-flex; align-items: center; gap: 10px; }
+  .logo-mark { width: 28px; height: 28px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 3px; }
+  .logo-mark > span { background: var(--brand-600); border-radius: 3px; }
+  .logo-mark > span:nth-child(2) { background: var(--brand-500); }
+  .logo-mark > span:nth-child(3) { background: var(--brand-500); }
+  .logo-mark > span:nth-child(4) { background: var(--brand-700); }
+  .logo-word { font-size: 18px; font-weight: 600; color: var(--neutral-900); letter-spacing: -0.2px; }
+  .mode-pill { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px 0 6px; margin-left: 4px; border-radius: 9999px; background: var(--brand-50); color: var(--brand-700); font-size: 11px; font-weight: 600; }
+  .mode-pill .ico { width: 16px; height: 16px; border-radius: 9999px; background: #fff; color: var(--brand-600); display: inline-flex; align-items: center; justify-content: center; }
+  .search-wrap { justify-self: center; width: 480px; height: 42px; background: var(--neutral-100); border: 1px solid var(--neutral-300); border-radius: 8px; display: flex; align-items: center; padding: 0 14px; gap: 10px; }
+  .search-wrap input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: transparent; font-size: 14px; }
+  .topbar-cta { justify-self: end; display: inline-flex; align-items: center; gap: 12px; }
+  .icon-btn { width: 38px; height: 38px; border-radius: 8px; background: transparent; border: 0; color: var(--neutral-600); display: inline-flex; align-items: center; justify-content: center; position: relative; }
+  .icon-btn .badge { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 9999px; background: var(--danger-500); box-shadow: 0 0 0 2px #fff; }
+  .avatar { width: 36px; height: 36px; border-radius: 9999px; background: var(--brand-50); color: var(--brand-900); display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; }
+
+  .sidebar { position: fixed; top: 64px; left: 0; bottom: 0; width: 240px; background: #fff; border-right: 1px solid var(--neutral-200); z-index: 40; display: flex; flex-direction: column; box-sizing: border-box; }
+  .mode-toggle { margin: 16px 12px 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; background: var(--neutral-100); border-radius: 10px; }
+  .mode-toggle button { height: 36px; border: 0; background: transparent; border-radius: 7px; font-size: 13px; font-weight: 600; color: var(--neutral-500); display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+  .mode-toggle button[aria-selected="true"] { background: #fff; color: var(--neutral-900); box-shadow: var(--elevation-1); }
+  .mode-toggle button[aria-selected="true"][data-mode="buyer"] .mode-ico { color: var(--brand-600); }
+  .sidebar-nav { flex: 1; padding: 16px 12px 12px; overflow-y: auto; }
+  .nav-section + .nav-section { margin-top: 24px; }
+  .nav-label { font-size: 11px; font-weight: 600; color: var(--neutral-400); letter-spacing: 0.08em; text-transform: uppercase; padding: 0 12px; margin-bottom: 8px; }
+  .nav-item { height: 40px; padding: 0 16px; border-radius: 6px; display: flex; align-items: center; gap: 10px; color: var(--neutral-700); font-size: 14px; font-weight: 400; position: relative; margin-bottom: 2px; }
+  .nav-item .nav-ico { color: var(--neutral-500); display: inline-flex; }
+  .nav-item:hover { background: var(--neutral-100); color: var(--neutral-900); }
+  .nav-item.is-active { background: var(--neutral-100); color: var(--neutral-900); font-weight: 600; }
+  .nav-item.is-active::before { content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 3px; border-radius: 0 9999px 9999px 0; background: var(--brand-600); }
+  .nav-item.is-active .nav-ico { color: var(--brand-600); }
+  .nav-item .count-pill { margin-left: auto; background: var(--neutral-100); color: var(--neutral-600); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 9999px; }
+  .nav-item.is-active .count-pill { background: var(--brand-100); color: var(--brand-700); }
+  .sidebar-user { margin: 0 12px 16px; padding: 10px 12px; border-radius: 8px; background: var(--neutral-50); display: flex; align-items: center; gap: 10px; }
+  .sidebar-user .avatar { width: 32px; height: 32px; font-size: 12px; }
+  .sidebar-user .name { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
+  .sidebar-user .name .n { font-size: 13px; font-weight: 600; color: var(--neutral-900); }
+  .sidebar-user .name .e { font-size: 11px; color: var(--neutral-500); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sidebar-user .log { color: var(--neutral-400); width: 28px; height: 28px; border-radius: 6px; background: transparent; border: 0; display: inline-flex; align-items: center; justify-content: center; }
+
+  main {
+    padding: 64px 0 0 240px;
+    height: 100vh;
+    box-sizing: border-box;
+  }
+  .layout {
+    height: calc(100vh - 64px);
+    display: grid;
+    grid-template-columns: 320px 1fr;
+  }
+
+  /* conversation list */
+  .convo-list {
+    background: #fff;
+    border-right: 1px solid var(--neutral-200);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .cl-head { padding: 20px 20px 16px; }
+  .cl-head h2 { margin: 0; font-size: 17px; font-weight: 600; color: var(--neutral-900); }
+  .cl-search {
+    margin: 12px 0 0;
+    height: 36px;
+    background: var(--neutral-100);
+    border: 1px solid var(--neutral-200);
+    border-radius: 8px;
+    padding: 0 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .cl-search input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: transparent; font-size: 13px; }
+  .cl-items { flex: 1; overflow-y: auto; }
+  .cl-item {
+    height: 68px;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--neutral-200);
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer;
+    position: relative;
+    transition: background var(--dur-micro) var(--ease-out);
+  }
+  .cl-item:hover { background: var(--neutral-50); }
+  .cl-item.is-active { background: var(--neutral-100); }
+  .cl-item.is-active::before {
+    content: ''; position: absolute; left: 0; top: 8px; bottom: 8px;
+    width: 2px; background: var(--brand-600);
+    border-radius: 0 9999px 9999px 0;
+  }
+  .cl-item.is-unread { background: var(--neutral-50); }
+  .cl-avatar {
+    width: 40px; height: 40px; border-radius: 9999px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600;
+    flex-shrink: 0;
+  }
+  .cl-avatar.brand   { background: var(--brand-50); color: var(--brand-900); }
+  .cl-avatar.success { background: var(--success-50); color: var(--success-600); }
+  .cl-avatar.warm    { background: var(--warning-50); color: var(--warning-600); }
+  .cl-avatar.violet  { background: hsl(280, 70%, 95%); color: hsl(280, 60%, 38%); }
+  .cl-avatar.rose    { background: hsl(338, 70%, 92%); color: hsl(338, 60%, 38%); }
+  .cl-body { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .cl-name { font-size: 14px; font-weight: 600; color: var(--neutral-900); }
+  .cl-preview {
+    font-size: 13px; color: var(--neutral-500);
+    overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  }
+  .cl-item.is-unread .cl-preview { color: var(--neutral-900); }
+  .cl-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+  .cl-time { font-size: 11px; color: var(--neutral-400); }
+  .cl-unread { width: 8px; height: 8px; border-radius: 9999px; background: var(--danger-500); }
+
+  /* chat area */
+  .chat {
+    display: flex; flex-direction: column;
+    background: var(--neutral-50);
+    overflow: hidden;
+  }
+  .chat-header {
+    height: 64px;
+    background: #fff;
+    border-bottom: 1px solid var(--neutral-200);
+    padding: 0 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .ch-left { display: inline-flex; align-items: center; gap: 12px; }
+  .ch-avatar {
+    width: 40px; height: 40px; border-radius: 9999px;
+    background: var(--brand-50); color: var(--brand-900);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600;
+  }
+  .ch-name { font-size: 15px; font-weight: 600; color: var(--neutral-900); display: flex; align-items: center; gap: 8px; }
+  .ch-name .verified { color: var(--brand-500); display: inline-flex; }
+  .ch-meta { font-size: 13px; color: var(--neutral-500); display: inline-flex; align-items: center; gap: 4px; }
+  .ch-meta .star { color: var(--warning-500); }
+  .ch-actions { display: inline-flex; align-items: center; gap: 4px; }
+  .ch-icon-btn {
+    width: 36px; height: 36px;
+    background: transparent; border: 0;
+    color: var(--neutral-500); border-radius: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .ch-icon-btn:hover { background: var(--neutral-100); color: var(--neutral-900); }
+
+  .listing-context {
+    background: var(--brand-50);
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .listing-context::after {
+    content: ''; position: absolute; top: -50px; right: -50px;
+    width: 160px; height: 160px;
+    background: radial-gradient(circle, hsl(248, 75%, 90%) 0%, transparent 65%);
+    border-radius: 9999px;
+    pointer-events: none;
+  }
+  .lc-thumb {
+    width: 40px; height: 40px; border-radius: 8px;
+    background: linear-gradient(135deg, hsl(248, 50%, 92%), hsl(248, 40%, 80%));
+    color: hsl(248, 40%, 40%);
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0; overflow: hidden; position: relative; z-index: 1;
+  }
+  .lc-text { flex: 1; position: relative; z-index: 1; }
+  .lc-name { font-size: 13px; font-weight: 600; color: var(--brand-900); }
+  .lc-price { font-size: 13px; font-weight: 400; color: var(--brand-700); }
+  .lc-cta {
+    background: transparent; border: 0;
+    color: var(--brand-600);
+    font-size: 13px; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 4px;
+    position: relative; z-index: 1;
+  }
+  .lc-cta:hover { color: var(--brand-700); }
+
+  /* messages */
+  .message-stream {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex; flex-direction: column;
+    gap: 16px;
+  }
+  .date-sep {
+    display: flex; align-items: center; gap: 12px;
+    color: var(--neutral-400);
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .date-sep::before, .date-sep::after {
+    content: ''; flex: 1; height: 1px; background: var(--neutral-200);
+  }
+  .msg-group {
+    display: flex; flex-direction: column;
+    gap: 4px;
+    max-width: 60%;
+  }
+  .msg-group.from-them { align-self: flex-start; }
+  .msg-group.from-me { align-self: flex-end; align-items: flex-end; }
+  .sender-name {
+    font-size: 11px; font-weight: 600;
+    color: var(--neutral-500);
+    margin-left: 4px;
+  }
+  .msg-bubble {
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .from-them .msg-bubble {
+    background: #fff;
+    color: var(--neutral-900);
+    box-shadow: var(--elevation-1);
+    border-bottom-left-radius: 2px;
+  }
+  .from-them .msg-bubble + .msg-bubble { border-top-left-radius: 10px; }
+  .from-them .msg-bubble:not(:last-child) { border-bottom-left-radius: 10px; }
+  .from-them .msg-bubble:last-child { border-bottom-left-radius: 2px; }
+
+  .from-me .msg-bubble {
+    background: var(--brand-600);
+    color: #fff;
+    border-bottom-right-radius: 2px;
+  }
+  .from-me .msg-bubble:not(:last-child) { border-bottom-right-radius: 10px; }
+  .from-me .msg-bubble:last-child { border-bottom-right-radius: 2px; }
+
+  .msg-time {
+    font-size: 11px;
+    color: var(--neutral-400);
+    margin-top: 2px;
+    padding: 0 4px;
+  }
+
+  /* input */
+  .input-bar {
+    background: #fff;
+    border-top: 1px solid var(--neutral-200);
+    padding: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .input-field {
+    flex: 1;
+    height: 44px;
+    background: var(--neutral-100);
+    border: 1px solid var(--neutral-300);
+    border-radius: 20px;
+    padding: 0 16px;
+    display: flex; align-items: center;
+    gap: 10px;
+    transition: border-color var(--dur-micro) var(--ease-out),
+                box-shadow var(--dur-micro) var(--ease-out),
+                background var(--dur-micro) var(--ease-out);
+  }
+  .input-field:focus-within {
+    background: #fff;
+    border-color: var(--brand-500);
+    box-shadow: 0 0 0 3px var(--brand-50);
+  }
+  .input-field .clip {
+    color: var(--neutral-400);
+    background: transparent; border: 0; padding: 0;
+    display: inline-flex; align-items: center;
+  }
+  .input-field input {
+    flex: 1; min-width: 0;
+    border: 0; outline: 0; background: transparent;
+    font-size: 14px; color: var(--neutral-900);
+  }
+  .input-field input::placeholder { color: var(--neutral-400); }
+  .send-btn {
+    width: 40px; height: 40px;
+    border-radius: 6px;
+    background: var(--brand-600); color: #fff;
+    border: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 12px hsla(248, 60%, 47%, 0.24), 0 1px 2px rgba(30,20,60,0.06);
+  }
+  .send-btn:hover { background: var(--brand-700); }
+</style>
+</head>
+<body data-screen-label="Messages">
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="Landing Page.html" class="logo">
+      <span class="logo-mark"><span></span><span></span><span></span><span></span></span>
+      <span class="logo-word">Setlarr</span>
+      <span class="mode-pill"><span class="ico"><i data-lucide="shopping-bag" style="width:11px;height:11px;"></i></span>Buying</span>
+    </a>
+    <label class="search-wrap">
+      <i data-lucide="search" style="width:16px;height:16px;color:var(--neutral-400);"></i>
+      <input type="search" placeholder="Search messages..." />
+    </label>
+    <div class="topbar-cta">
+      <a class="icon-btn" href="Notifications Page.html"><i data-lucide="bell" style="width:20px;height:20px;"></i><span class="badge"></span></a>
+      <span class="avatar">AO</span>
+    </div>
+  </div>
+</header>
+
+<aside class="sidebar">
+  <div class="mode-toggle">
+    <button type="button" data-mode="buyer" aria-selected="true"><span class="mode-ico"><i data-lucide="shopping-bag" style="width:14px;height:14px;"></i></span> Buying</button>
+    <button type="button" data-mode="seller" aria-selected="false"><span class="mode-ico"><i data-lucide="tag" style="width:14px;height:14px;"></i></span> Selling</button>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-label">Main</div>
+      <a href="Dashboard Page.html" class="nav-item"><span class="nav-ico"><i data-lucide="home" style="width:18px;height:18px;"></i></span> Home</a>
+      <a href="Explore Page.html" class="nav-item"><span class="nav-ico"><i data-lucide="search" style="width:18px;height:18px;"></i></span> Explore</a>
+      <a href="Orders Page.html" class="nav-item"><span class="nav-ico"><i data-lucide="shopping-bag" style="width:18px;height:18px;"></i></span> Orders<span class="count-pill">3</span></a>
+      <a href="#" class="nav-item is-active"><span class="nav-ico"><i data-lucide="message-circle" style="width:18px;height:18px;"></i></span> Messages<span class="count-pill">2</span></a>
+      <a href="Saved Page.html" class="nav-item"><span class="nav-ico"><i data-lucide="heart" style="width:18px;height:18px;"></i></span> Saved<span class="count-pill">12</span></a>
+      <a href="Wallet Page.html" class="nav-item"><span class="nav-ico"><i data-lucide="wallet" style="width:18px;height:18px;"></i></span> Wallet</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Account</div>
+      <a href="Profile Page.html" class="nav-item"><span class="nav-ico"><i data-lucide="user" style="width:18px;height:18px;"></i></span> Profile</a>
+      <a href="Profile Page.html" class="nav-item"><span class="nav-ico"><i data-lucide="settings" style="width:18px;height:18px;"></i></span> Settings</a>
+      <a href="Help Page.html" class="nav-item"><span class="nav-ico"><i data-lucide="help-circle" style="width:18px;height:18px;"></i></span> Help</a>
+    </div>
+  </nav>
+  <div class="sidebar-user">
+    <span class="avatar">AO</span>
+    <div class="name"><span class="n">Ada Okonkwo</span><span class="e">ada.okonkwo@gmail.com</span></div>
+    <button class="log"><i data-lucide="log-out" style="width:16px;height:16px;"></i></button>
+  </div>
+</aside>
+
+<main>
+  <div class="layout">
+
+    <!-- conversation list -->
+    <aside class="convo-list">
+      <div class="cl-head">
+        <h2>Messages</h2>
+        <label class="cl-search">
+          <i data-lucide="search" style="width:14px;height:14px;color:var(--neutral-400);"></i>
+          <input type="search" placeholder="Search conversations..." />
+        </label>
+      </div>
+      <div class="cl-items">
+
+        <div class="cl-item is-active">
+          <span class="cl-avatar brand">EO</span>
+          <div class="cl-body">
+            <span class="cl-name">Emeka Okafor</span>
+            <span class="cl-preview">Sure, I can do ₦400,000 if you pick up today</span>
+          </div>
+          <div class="cl-right">
+            <span class="cl-time">2m</span>
+          </div>
+        </div>
+
+        <div class="cl-item is-unread">
+          <span class="cl-avatar warm">TA</span>
+          <div class="cl-body">
+            <span class="cl-name">Tunde A.</span>
+            <span class="cl-preview">The headphones are still available, when can you...</span>
+          </div>
+          <div class="cl-right">
+            <span class="cl-time">28m</span>
+            <span class="cl-unread"></span>
+          </div>
+        </div>
+
+        <div class="cl-item">
+          <span class="cl-avatar success">SL</span>
+          <div class="cl-body">
+            <span class="cl-name">Sade L.</span>
+            <span class="cl-preview">You: Great, see you Thursday for the handover</span>
+          </div>
+          <div class="cl-right">
+            <span class="cl-time">3h</span>
+          </div>
+        </div>
+
+        <div class="cl-item">
+          <span class="cl-avatar violet">IT</span>
+          <div class="cl-body">
+            <span class="cl-name">Ifeanyi T.</span>
+            <span class="cl-preview">Thanks for the review! Hope you enjoy the watch</span>
+          </div>
+          <div class="cl-right">
+            <span class="cl-time">Mon</span>
+          </div>
+        </div>
+
+        <div class="cl-item">
+          <span class="cl-avatar rose">CN</span>
+          <div class="cl-body">
+            <span class="cl-name">Chioma N.</span>
+            <span class="cl-preview">You: I'll take it. Sending the offer now</span>
+          </div>
+          <div class="cl-right">
+            <span class="cl-time">Sun</span>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- chat area -->
+    <section class="chat">
+      <div class="chat-header">
+        <div class="ch-left">
+          <span class="ch-avatar">EO</span>
+          <div>
+            <div class="ch-name">Emeka Okafor <span class="verified"><i data-lucide="badge-check" style="width:14px;height:14px;"></i></span></div>
+            <div class="ch-meta"><span class="star">★</span> 4.9 · usually replies in 5min</div>
+          </div>
+        </div>
+        <div class="ch-actions">
+          <button class="ch-icon-btn"><i data-lucide="phone" style="width:18px;height:18px;"></i></button>
+          <button class="ch-icon-btn"><i data-lucide="more-horizontal" style="width:18px;height:18px;"></i></button>
+        </div>
+      </div>
+
+      <div class="listing-context">
+        <span class="lc-thumb"><i data-lucide="smartphone" style="width:18px;height:18px;"></i></span>
+        <div class="lc-text">
+          <div class="lc-name">Discussing: iPhone 14 Pro Max</div>
+          <div class="lc-price">₦420,000</div>
+        </div>
+        <button class="lc-cta">
+          <i data-lucide="tag" style="width:13px;height:13px;"></i>
+          Make offer
+        </button>
+      </div>
+
+      <div class="message-stream">
+        <div class="date-sep">Today</div>
+
+        <div class="msg-group from-me">
+          <div class="msg-bubble">Hey, is the iPhone still available?</div>
+          <div class="msg-time">2:14 PM</div>
+        </div>
+
+        <div class="msg-group from-them">
+          <span class="sender-name">Emeka</span>
+          <div class="msg-bubble">Yes, still available. Battery health is 92%, comes with the original box and unused MagSafe charger.</div>
+          <div class="msg-bubble">All cameras tested, Face ID working perfectly.</div>
+          <div class="msg-time">2:16 PM</div>
+        </div>
+
+        <div class="msg-group from-me">
+          <div class="msg-bubble">Would you take ₦380,000 if I pick up today? I'm in Lekki.</div>
+          <div class="msg-time">2:18 PM</div>
+        </div>
+
+        <div class="msg-group from-them">
+          <span class="sender-name">Emeka</span>
+          <div class="msg-bubble">Sure, I can do ₦400,000 if you pick up today. ₦380K is a bit too low — I had another buyer offer ₦410K but they wanted to ship.</div>
+          <div class="msg-time">2:24 PM</div>
+        </div>
+
+        <div class="msg-group from-me">
+          <div class="msg-bubble">Deal. Sending the ₦400K offer now.</div>
+          <div class="msg-time">Just now</div>
+        </div>
+      </div>
+
+      <div class="input-bar">
+        <div class="input-field">
+          <button class="clip"><i data-lucide="paperclip" style="width:16px;height:16px;"></i></button>
+          <input type="text" placeholder="Message Emeka..." />
+        </div>
+        <button class="send-btn"><i data-lucide="send-horizontal" style="width:18px;height:18px;color:#fff;"></i></button>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+  if (window.lucide && typeof lucide.createIcons === 'function') {
+    lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+  }
+  document.querySelectorAll('.cl-item').forEach(i => {
+    i.addEventListener('click', () => {
+      document.querySelectorAll('.cl-item').forEach(x => x.classList.remove('is-active'));
+      i.classList.add('is-active');
+      i.classList.remove('is-unread');
+      const dot = i.querySelector('.cl-unread'); if (dot) dot.remove();
+    });
+  });
+  document.querySelectorAll('.mode-toggle button').forEach(b => {
+    b.addEventListener('click', () => { if (b.dataset.mode === 'seller') window.location.href = 'Dashboard Page.html'; });
+  });
+</script>
+
+</body>
+</html>

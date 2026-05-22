@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Wallet · Setlarr</title>
+<meta name="viewport" content="width=1280" />
+<link rel="stylesheet" href="../colors_and_type.css" />
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  html, body { margin: 0; min-height: 100%; }
+  body { background: var(--neutral-50); color: var(--neutral-900); min-width: 1280px; }
+  button, input { font-family: inherit; }
+  button { cursor: pointer; }
+  a { text-decoration: none; color: inherit; }
+  [data-lucide] { display: inline-block; vertical-align: middle; }
+
+  .topbar { position: fixed; top: 0; left: 0; right: 0; height: 64px; background: #fff; border-bottom: 1px solid var(--neutral-200); z-index: 50; }
+  .topbar-inner { height: 100%; padding: 0 24px 0 32px; display: grid; grid-template-columns: 240px 1fr 1fr; align-items: center; gap: 24px; }
+  .logo { display: inline-flex; align-items: center; gap: 10px; }
+  .logo-mark { width: 28px; height: 28px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 3px; }
+  .logo-mark > span { background: var(--brand-600); border-radius: 3px; }
+  .logo-mark > span:nth-child(2) { background: var(--brand-500); }
+  .logo-mark > span:nth-child(3) { background: var(--brand-500); }
+  .logo-mark > span:nth-child(4) { background: var(--brand-700); }
+  .logo-word { font-size: 18px; font-weight: 600; color: var(--neutral-900); letter-spacing: -0.2px; }
+  .mode-pill { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px 0 6px; margin-left: 4px; border-radius: 9999px; background: var(--brand-50); color: var(--brand-700); font-size: 11px; font-weight: 600; }
+  .mode-pill .ico { width: 16px; height: 16px; border-radius: 9999px; background: #fff; color: var(--brand-600); display: inline-flex; align-items: center; justify-content: center; }
+  .search-wrap { justify-self: center; width: 480px; height: 42px; background: var(--neutral-100); border: 1px solid var(--neutral-300); border-radius: 8px; display: flex; align-items: center; padding: 0 14px; gap: 10px; }
+  .search-wrap input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: transparent; font-size: 14px; }
+  .topbar-cta { justify-self: end; display: inline-flex; align-items: center; gap: 12px; }
+  .icon-btn { width: 38px; height: 38px; border-radius: 8px; background: transparent; border: 0; color: var(--neutral-600); display: inline-flex; align-items: center; justify-content: center; position: relative; }
+  .icon-btn:hover { background: var(--neutral-100); color: var(--neutral-900); }
+  .icon-btn .badge { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 9999px; background: var(--danger-500); box-shadow: 0 0 0 2px #fff; }
+  .avatar { width: 36px; height: 36px; border-radius: 9999px; background: var(--brand-50); color: var(--brand-900); display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; }
+
+  .sidebar { position: fixed; top: 64px; left: 0; bottom: 0; width: 240px; background: #fff; border-right: 1px solid var(--neutral-200); z-index: 40; display: flex; flex-direction: column; box-sizing: border-box; }
+  .mode-toggle { margin: 16px 12px 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; background: var(--neutral-100); border-radius: 10px; }
+  .mode-toggle button { height: 36px; border: 0; background: transparent; border-radius: 7px; font-size: 13px; font-weight: 600; color: var(--neutral-500); display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+  .mode-toggle button[aria-selected="true"] { background: #fff; color: var(--neutral-900); box-shadow: var(--elevation-1); }
+  .mode-toggle button[aria-selected="true"][data-mode="buyer"] .mode-ico { color: var(--brand-600); }
+  .sidebar-nav { flex: 1; padding: 16px 12px 12px; overflow-y: auto; }
+  .nav-section + .nav-section { margin-top: 24px; }
+  .nav-label { font-size: 11px; font-weight: 600; color: var(--neutral-400); letter-spacing: 0.08em; text-transform: uppercase; padding: 0 12px; margin-bottom: 8px; }
+  .nav-item { height: 40px; padding: 0 16px; border-radius: 6px; display: flex; align-items: center; gap: 10px; color: var(--neutral-700); font-size: 14px; font-weight: 400; position: relative; margin-bottom: 2px; }
+  .nav-item .nav-ico { color: var(--neutral-500); display: inline-flex; }
+  .nav-item:hover { background: var(--neutral-100); color: var(--neutral-900); }
+  .nav-item.is-active { background: var(--neutral-100); color: var(--neutral-900); font-weight: 600; }
+  .nav-item.is-active::before { content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 3px; border-radius: 0 9999px 9999px 0; background: var(--brand-600); }
+  .nav-item.is-active .nav-ico { color: var(--brand-600); }
+  .nav-item .count-pill { margin-left: auto; background: var(--neutral-100); color: var(--neutral-600); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 9999px; }
+  .sidebar-user { margin: 0 12px 16px; padding: 10px 12px; border-radius: 8px; background: var(--neutral-50); display: flex; align-items: center; gap: 10px; }
+  .sidebar-user .name { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
+  .sidebar-user .name .n { font-size: 13px; font-weight: 600; color: var(--neutral-900); }
+  .sidebar-user .name .e { font-size: 11px; color: var(--neutral-500); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sidebar-user .avatar { width: 32px; height: 32px; font-size: 12px; }
+  .sidebar-user .log { color: var(--neutral-400); width: 28px; height: 28px; border-radius: 6px; background: transparent; border: 0; display: inline-flex; align-items: center; justify-content: center; }
+
+  main { padding: 64px 0 0 240px; min-height: 100vh; box-sizing: border-box; }
+  .content { padding: 32px 40px 64px; position: relative; isolation: isolate; }
+  .content::before { content: ''; position: absolute; top: 0; right: 0; width: 360px; height: 360px; background-image: radial-gradient(circle, hsl(248, 30%, 84%) 1px, transparent 1.2px); background-size: 22px 22px; mask-image: radial-gradient(circle at top right, #000 0%, transparent 75%); -webkit-mask-image: radial-gradient(circle at top right, #000 0%, transparent 75%); z-index: 0; opacity: 0.4; pointer-events: none; }
+
+  .page-head h1 { margin: 0; font-size: 22px; font-weight: 600; color: var(--neutral-900); letter-spacing: -0.3px; }
+
+  /* top row */
+  .top-row {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    gap: 16px;
+    position: relative; z-index: 1;
+  }
+
+  /* balance card — dark */
+  .balance-card {
+    background: #1A1A24;
+    color: #fff;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 4px 16px rgba(30,20,60,0.15);
+    position: relative;
+    overflow: hidden;
+  }
+  .balance-card::after {
+    content: '';
+    position: absolute;
+    top: -90px; right: -90px;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, hsla(248, 75%, 65%, 0.35) 0%, transparent 60%);
+    border-radius: 9999px;
+    pointer-events: none;
+  }
+  .balance-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1.2px);
+    background-size: 20px 20px;
+    opacity: 0.7;
+    pointer-events: none;
+  }
+  .balance-label {
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    color: hsla(0,0%,100%,0.6);
+    display: inline-flex; align-items: center; gap: 8px;
+    position: relative; z-index: 1;
+  }
+  .balance-amt {
+    margin-top: 8px;
+    font-size: 36px; font-weight: 600;
+    letter-spacing: -0.6px;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+    position: relative; z-index: 1;
+  }
+  .balance-pending {
+    margin-top: 6px;
+    font-size: 13px;
+    color: hsla(0,0%,100%,0.65);
+    display: inline-flex; align-items: center; gap: 6px;
+    position: relative; z-index: 1;
+  }
+  .balance-pending .pend-amt { color: hsl(38, 90%, 78%); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .balance-actions {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    position: relative; z-index: 1;
+  }
+  .bal-btn {
+    height: 56px;
+    background: hsla(0,0%,100%,0.08);
+    border: 1px solid hsla(0,0%,100%,0.12);
+    color: #fff;
+    border-radius: 10px;
+    font-size: 14px; font-weight: 600;
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 8px;
+    transition: background var(--dur-micro) var(--ease-out);
+  }
+  .bal-btn:hover { background: hsla(0,0%,100%,0.14); }
+  .bal-btn.primary {
+    background: var(--brand-600);
+    border-color: var(--brand-600);
+  }
+  .bal-btn.primary:hover { background: var(--brand-700); }
+
+  /* stats */
+  .quick-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .stat-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--elevation-1);
+    display: flex; flex-direction: column;
+    position: relative; overflow: hidden;
+  }
+  .stat-card::after {
+    content: '';
+    position: absolute;
+    top: -2px; right: -2px;
+    width: 80px; height: 80px;
+    background-image: radial-gradient(circle, hsl(240, 12%, 90%) 1px, transparent 1.2px);
+    background-size: 12px 12px;
+    mask-image: radial-gradient(circle at top right, #000 0%, transparent 70%);
+    -webkit-mask-image: radial-gradient(circle at top right, #000 0%, transparent 70%);
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  .stat-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px;
+    position: relative; z-index: 1;
+  }
+  .stat-label {
+    font-size: 11px; font-weight: 600;
+    color: var(--neutral-500);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .stat-ico {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .stat-ico.sent  { background: var(--brand-50);   color: var(--brand-600);   }
+  .stat-ico.recv  { background: var(--success-50); color: var(--success-600); }
+  .stat-value {
+    margin-top: 14px;
+    font-size: 26px; font-weight: 600;
+    color: var(--neutral-900);
+    letter-spacing: -0.4px;
+    font-variant-numeric: tabular-nums;
+    position: relative; z-index: 1;
+  }
+  .stat-meta {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--neutral-500);
+    position: relative; z-index: 1;
+  }
+  .stat-meta .delta {
+    color: var(--success-600); font-weight: 600;
+    margin-right: 4px;
+  }
+
+  /* transactions */
+  .tx-section { margin-top: 28px; position: relative; z-index: 1; }
+  .tx-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .tx-head h2 {
+    margin: 0;
+    font-size: 16px; font-weight: 600;
+    color: var(--neutral-900);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .tx-head h2 .accent {
+    display: inline-block;
+    width: 4px; height: 14px;
+    background: var(--brand-600);
+    border-radius: 9999px;
+  }
+  .tx-head .view-all {
+    font-size: 13px; color: var(--brand-600);
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .tx-table {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: var(--elevation-1);
+    overflow: hidden;
+  }
+  .tx-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 140px 140px;
+    align-items: center;
+    padding: 0 20px;
+    gap: 16px;
+    height: 56px;
+    border-bottom: 1px solid var(--neutral-200);
+    transition: background var(--dur-micro) var(--ease-out);
+    font-size: 14px;
+    color: var(--neutral-700);
+  }
+  .tx-row:last-child { border-bottom: 0; }
+  .tx-row:hover:not(.tx-head-row) { background: var(--neutral-50); }
+  .tx-head-row {
+    background: var(--neutral-50);
+    font-size: 11px; font-weight: 600;
+    color: var(--neutral-500);
+    letter-spacing: 0.06em; text-transform: uppercase;
+    border-bottom: 1px solid var(--neutral-200);
+  }
+
+  .tx-type-cell { display: inline-flex; align-items: center; gap: 12px; }
+  .tx-ico {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .tx-ico.brand   { background: var(--brand-50);   color: var(--brand-600);   }
+  .tx-ico.success { background: var(--success-50); color: var(--success-600); }
+  .tx-ico.warning { background: var(--warning-50); color: var(--warning-600); }
+  .tx-ico.danger  { background: var(--danger-50);  color: var(--danger-600);  }
+  .tx-ico.neutral { background: var(--neutral-100); color: var(--neutral-600); }
+  .tx-type-label {
+    font-size: 14px; font-weight: 600;
+    color: var(--neutral-900);
+  }
+  .tx-desc { color: var(--neutral-700); }
+  .tx-date { color: var(--neutral-500); font-size: 13px; }
+  .tx-amount {
+    text-align: right;
+    font-size: 14px; font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .tx-amount.pos { color: var(--success-600); }
+  .tx-amount.neg { color: var(--neutral-900); }
+  .tx-amount.pending { color: var(--warning-600); }
+</style>
+</head>
+<body data-screen-label="Wallet">
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="Landing Page.html" class="logo">
+      <span class="logo-mark"><span></span><span></span><span></span><span></span></span>
+      <span class="logo-word">Setlarr</span>
+      <span class="mode-pill"><span class="ico"><i data-lucide="shopping-bag" style="width:11px;height:11px;"></i></span>Buying</span>
+    </a>
+    <label class="search-wrap">
+      <i data-lucide="search" style="width:16px;height:16px;color:var(--neutral-400);"></i>
+      <input type="search" placeholder="Search transactions..." />
+    </label>
+    <div class="topbar-cta">
+      <a class="icon-btn" href="Notifications Page.html" aria-label="Notifications"><i data-lucide="bell" style="width:20px;height:20px;"></i><span class="badge"></span></a>
+      <span class="avatar">AO</span>
+    </div>
+  </div>
+</header>
+
+<aside class="sidebar">
+  <div class="mode-toggle">
+    <button type="button" data-mode="buyer" aria-selected="true"><span class="mode-ico"><i data-lucide="shopping-bag" style="width:14px;height:14px;"></i></span> Buying</button>
+    <button type="button" data-mode="seller" aria-selected="false"><span class="mode-ico"><i data-lucide="tag" style="width:14px;height:14px;"></i></span> Selling</button>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-label">Main</div>
+      <a href="Dashboard Page.html" class="nav-item"><span class="nav-ico"><i data-lucide="home" style="width:18px;height:18px;"></i></span> Home</a>
+      <a href="Explore Page.html" class="nav-item"><span class="nav-ico"><i data-lucide="search" style="width:18px;height:18px;"></i></span> Explore</a>
+      <a href="Orders Page.html" class="nav-item"><span class="nav-ico"><i data-lucide="shopping-bag" style="width:18px;height:18px;"></i></span> Orders<span class="count-pill">3</span></a>
+      <a href="Saved Page.html" class="nav-item"><span class="nav-ico"><i data-lucide="heart" style="width:18px;height:18px;"></i></span> Saved<span class="count-pill">12</span></a>
+      <a href="Wallet Page.html" class="nav-item is-active"><span class="nav-ico"><i data-lucide="wallet" style="width:18px;height:18px;"></i></span> Wallet</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Account</div>
+      <a href="Profile Page.html" class="nav-item"><span class="nav-ico"><i data-lucide="user" style="width:18px;height:18px;"></i></span> Profile</a>
+      <a href="Profile Page.html" class="nav-item"><span class="nav-ico"><i data-lucide="settings" style="width:18px;height:18px;"></i></span> Settings</a>
+      <a href="Help Page.html" class="nav-item"><span class="nav-ico"><i data-lucide="help-circle" style="width:18px;height:18px;"></i></span> Help</a>
+    </div>
+  </nav>
+  <div class="sidebar-user">
+    <span class="avatar">AO</span>
+    <div class="name"><span class="n">Ada Okonkwo</span><span class="e">ada.okonkwo@gmail.com</span></div>
+    <button class="log"><i data-lucide="log-out" style="width:16px;height:16px;"></i></button>
+  </div>
+</aside>
+
+<main>
+  <div class="content">
+
+    <div class="page-head"><h1>Wallet</h1></div>
+
+    <div class="top-row">
+
+      <!-- balance card -->
+      <div class="balance-card">
+        <div class="balance-label">
+          <i data-lucide="wallet" style="width:14px;height:14px;"></i>
+          Available balance
+        </div>
+        <div class="balance-amt">₦812,400</div>
+        <div class="balance-pending">
+          <i data-lucide="clock" style="width:13px;height:13px;"></i>
+          <span class="pend-amt">₦340,000</span> pending release from 2 orders
+        </div>
+        <div class="balance-actions">
+          <button class="bal-btn primary">
+            <i data-lucide="plus" style="width:16px;height:16px;"></i>
+            Add money
+          </button>
+          <button class="bal-btn">
+            <i data-lucide="arrow-down-to-line" style="width:16px;height:16px;"></i>
+            Withdraw
+          </button>
+          <button class="bal-btn">
+            <i data-lucide="send" style="width:16px;height:16px;"></i>
+            Transfer
+          </button>
+        </div>
+      </div>
+
+      <!-- quick stats -->
+      <div class="quick-stats">
+        <div class="stat-card">
+          <div class="stat-head">
+            <span class="stat-label">Total sent</span>
+            <span class="stat-ico sent"><i data-lucide="arrow-up-right" style="width:18px;height:18px;"></i></span>
+          </div>
+          <div class="stat-value">₦2.4M</div>
+          <div class="stat-meta">
+            <span class="delta">↑ 18%</span> vs last month
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-head">
+            <span class="stat-label">Total received</span>
+            <span class="stat-ico recv"><i data-lucide="arrow-down-left" style="width:18px;height:18px;"></i></span>
+          </div>
+          <div class="stat-value">₦3.2M</div>
+          <div class="stat-meta">
+            <span class="delta">↑ 24%</span> vs last month
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- transactions -->
+    <section class="tx-section">
+      <div class="tx-head">
+        <h2><span class="accent"></span>Recent transactions</h2>
+        <a href="#" class="view-all">View all <i data-lucide="arrow-right" style="width:13px;height:13px;"></i></a>
+      </div>
+
+      <div class="tx-table">
+        <div class="tx-row tx-head-row">
+          <span>Type</span>
+          <span>Description</span>
+          <span>Date</span>
+          <span style="text-align: right;">Amount</span>
+        </div>
+
+        <div class="tx-row">
+          <span class="tx-type-cell">
+            <span class="tx-ico brand"><i data-lucide="lock" style="width:18px;height:18px;"></i></span>
+            <span class="tx-type-label">Escrow lock</span>
+          </span>
+          <span class="tx-desc">iPhone 14 Pro Max · Emeka Okafor</span>
+          <span class="tx-date">Nov 12, 14:22</span>
+          <span class="tx-amount neg">−₦420,000</span>
+        </div>
+
+        <div class="tx-row">
+          <span class="tx-type-cell">
+            <span class="tx-ico success"><i data-lucide="arrow-down-left" style="width:18px;height:18px;"></i></span>
+            <span class="tx-type-label">Funds released</span>
+          </span>
+          <span class="tx-desc">Apple Watch S9 · Ifeanyi T.</span>
+          <span class="tx-date">Nov 4, 09:18</span>
+          <span class="tx-amount pos">+₦310,000</span>
+        </div>
+
+        <div class="tx-row">
+          <span class="tx-type-cell">
+            <span class="tx-ico warning"><i data-lucide="hourglass" style="width:18px;height:18px;"></i></span>
+            <span class="tx-type-label">Pending</span>
+          </span>
+          <span class="tx-desc">Sony WH-1000XM5 · awaiting shipment</span>
+          <span class="tx-date">Nov 3, 19:05</span>
+          <span class="tx-amount pending">₦185,000</span>
+        </div>
+
+        <div class="tx-row">
+          <span class="tx-type-cell">
+            <span class="tx-ico neutral"><i data-lucide="plus" style="width:18px;height:18px;"></i></span>
+            <span class="tx-type-label">Top-up</span>
+          </span>
+          <span class="tx-desc">Card •• 4827 · auto top-up</span>
+          <span class="tx-date">Nov 1, 08:00</span>
+          <span class="tx-amount pos">+₦500,000</span>
+        </div>
+
+        <div class="tx-row">
+          <span class="tx-type-cell">
+            <span class="tx-ico danger"><i data-lucide="alert-triangle" style="width:18px;height:18px;"></i></span>
+            <span class="tx-type-label">Refunded</span>
+          </span>
+          <span class="tx-desc">Dispute upheld · Order #SET-3744</span>
+          <span class="tx-date">Oct 28, 11:42</span>
+          <span class="tx-amount pos">+₦94,000</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+  if (window.lucide && typeof lucide.createIcons === 'function') {
+    lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+  }
+  document.querySelectorAll('.mode-toggle button').forEach(b => {
+    b.addEventListener('click', () => { if (b.dataset.mode === 'seller') window.location.href = 'Dashboard Page.html'; });
+  });
+</script>
+
+</body>
+</html>
